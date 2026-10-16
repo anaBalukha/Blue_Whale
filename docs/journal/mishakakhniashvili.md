@@ -7,7 +7,7 @@ Format per entry:
 
 ---
 
-**W1 · Context as Budget** ·
+**W1 · Context as Budget** · I applied this pattern by defining the essential conversation state in docs/spec.md, including user requirements, decisions, and trusted checkpoints. I delegated specification drafting and ambiguity review to ChatGPT, then checked the suggestions against our MVP requirements. I rejected building a web interface immediately because a terminal application lets us test drift detection and recovery first.
 
 **W2 · Spec Before Code** ·
 

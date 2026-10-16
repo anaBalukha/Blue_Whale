@@ -106,3 +106,15 @@ Conversation data may contain private or confidential information, so the MVP sh
 - RAG or a vector database unless later requirements make it necessary.
 - A complex analytics dashboard.
 - Production-scale deployment or thousands of concurrent users.
+
+## Lab 1 AI critique decisions
+
+- Interface: A terminal application for the MVP. A web interface is deferred.
+- State: Automatically track conversation state in memory. Explicit user changes override older decisions.
+- Recovery: Regenerate once after detecting drift. If recovery fails, warn the user and request clarification.
+
+## Success criteria verification
+
+- Detection: At least 85% accuracy on 50 or more labeled cases, including drift, no drift, and intentional changes.
+- Recovery: At least 80% of confirmed drift cases must produce responses consistent with the latest trusted state.
+- Consistency: At least 90% of successful recoveries must remain consistent in the next response.
