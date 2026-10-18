@@ -1,36 +1,41 @@
-# Spec v0 · [Product name]
+# HW1 - Golden Test Evaluation Reporter
 
-*One page. Rough is fine, empty is not. This grows into your Week 4 Design Review.*
-
-## Problem
-Two sentences. Who hurts, and how, today.
+## Goal
+Build a Python CLI tool that evaluates expected versus actual test
+outcomes, calculates a pass rate, and identifies failed test cases.
 
 ## Users
-Who exactly. "Students" is too broad; "students who miss club events because posters are the only announcement" is right.
+QA engineers and developers evaluating AI-powered applications.
 
-## Success criteria
-Three, each measurable. If you cannot measure it, rewrite it.
-1.
-2.
-3.
+## Input
+A JSON object containing:
+- cases: a non-empty list of test cases
+- threshold: optional minimum pass rate, default 0.70
 
-## Core feature (Weeks 2 to 4 scope)
-The one thing your product does first. One paragraph.
+Each case has a unique id, expected status, and actual status.
+Supported statuses are "answered" and "refused".
 
-## Context list
-What information must the AI see to do its job? Where does each piece live? (This is the Context as Budget pattern, in writing.)
+## Output
+JSON containing total, passed, pass_rate, meets_threshold,
+and failed_ids.
 
 ## Acceptance criteria
-Three concrete "done when" statements for the core feature.
-1.
-2.
-3.
+- AC1: Matching expected and actual statuses count as passed.
+- AC2: Mismatches are reported in failed_ids.
+- AC3: pass_rate equals passed / total, rounded to 2 decimals.
+- AC4: meets_threshold is true when pass_rate >= threshold.
+- AC5: Empty cases, duplicate IDs, invalid statuses, or a
+  threshold outside 0..1 return INVALID_INPUT and exit code 2.
 
-## Napkin math
-requests/day × (tokens in × price in + tokens out × price out) × 30 = $____ /month on [model].
+## Context
+The tool evaluates supplied test outcomes only. It does not
+generate AI responses or decide whether an answer is correct.
 
-## Risks and safety
-Two things most likely to go wrong, plus one way a user could misuse this. One line each.
+## Out of scope
+Live model calls, retrieval, citation scoring, and dashboards.
 
-## Out of scope (for now)
-List it so nobody builds it by accident.
+## Run
+python hw1/mishakakhniashvili/src/evaluate.py '<JSON input>'
+
+## Test
+python -m pytest hw1/mishakakhniashvili
