@@ -10,9 +10,9 @@
 
 | Member | GitHub username | Standing role |
 |---|---|---|
-| | | Repo keeper |
-| | | Spec keeper |
-| | | Eval keeper (from Week 4) |
+| Ana Balukhashvili | anaBalukha | Repo keeper |
+| Aleksandre Giorgashvili | lexokodavs | Spec keeper |
+| Mikheili Kakhniashvili | mishakakhniashvili | Eval keeper |
 | | | |
 
 - **Repo keeper:** owns the repo; access, settings, branch rules, CI, tags. Makes the "ask first" changes to `.github/`.
