@@ -1,0 +1,75 @@
+{
+ "ts": "2026-10-18T21:59:51+00:00",
+ "mode": "offline",
+ "chat_model": "offline/extractive",
+ "embed_model": "offline/trigram-hash",
+ "k": 3,
+ "passed": 1,
+ "total": 5,
+ "pass_rate": 0.2,
+ "threshold": 0.7,
+ "items": [
+  {
+   "id": "g1",
+   "type": "factual",
+   "pass": false,
+   "why": [
+    "expected answered, got refused (best match 0.47 below threshold)",
+    "did not cite project/terminal-first",
+    "did not mention 'terminal'"
+   ],
+   "status": "refused",
+   "answer": "I can't answer that from Blue Whale's sources.",
+   "cited": []
+  },
+  {
+   "id": "g2",
+   "type": "factual",
+   "pass": false,
+   "why": [
+    "expected answered, got refused (best match 0.44 below threshold)",
+    "did not cite project/blue-whale-spec",
+    "did not mention '85%'"
+   ],
+   "status": "refused",
+   "answer": "I can't answer that from Blue Whale's sources.",
+   "cited": []
+  },
+  {
+   "id": "g3",
+   "type": "reasoning",
+   "pass": false,
+   "why": [
+    "expected answered, got refused (best match 0.54 below threshold)",
+    "did not cite project/terminal-first",
+    "did not cite project/explicit-user-changes",
+    "did not mention 'user'"
+   ],
+   "status": "refused",
+   "answer": "I can't answer that from Blue Whale's sources.",
+   "cited": []
+  },
+  {
+   "id": "g4",
+   "type": "edge",
+   "pass": false,
+   "why": [
+    "expected answered, got refused (best match 0.43 below threshold)",
+    "did not cite project/blue-whale-spec",
+    "did not mention 'drift'"
+   ],
+   "status": "refused",
+   "answer": "I can't answer that from Blue Whale's sources.",
+   "cited": []
+  },
+  {
+   "id": "g5",
+   "type": "refusal",
+   "pass": true,
+   "why": [],
+   "status": "refused",
+   "answer": "I can't answer that from Blue Whale's sources.",
+   "cited": []
+  }
+ ]
+}

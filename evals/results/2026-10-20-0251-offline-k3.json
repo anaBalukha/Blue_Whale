@@ -1,0 +1,73 @@
+{
+ "ts": "2026-10-19T22:51:06+00:00",
+ "mode": "offline",
+ "chat_model": "offline/extractive",
+ "embed_model": "offline/trigram-hash",
+ "k": 3,
+ "passed": 4,
+ "total": 5,
+ "pass_rate": 0.8,
+ "threshold": 0.7,
+ "items": [
+  {
+   "id": "g1",
+   "type": "factual",
+   "pass": true,
+   "why": [],
+   "status": "answered",
+   "answer": "Blue Whale needs a simple interface to test conversation drift detection and recovery [1]. - Interface: A terminal application for the MVP [2]. A web interface is deferred [2].",
+   "cited": [
+    "project/terminal-first",
+    "project/blue-whale-spec"
+   ]
+  },
+  {
+   "id": "g2",
+   "type": "factual",
+   "pass": true,
+   "why": [],
+   "status": "answered",
+   "answer": "**Drift detection accuracy:** correctly classify at least 85% of cases in a labeled benchmark of at least 50 conversation examples containing both drift and non-drift cases [1]. **Recovery success:** in at least 80% of confirmed drift cases, the corrected response follows the latest valid user requirements and expected conversation state [1]. - Detection: At least 85% accuracy on 50 or more labeled cases, including drift, no drift, and intentional changes [3]. - Recovery: At least 80% of confirmed drift cases must produce responses consistent with the latest trusted state [3].",
+   "cited": [
+    "project/blue-whale-spec",
+    "project/blue-whale-spec"
+   ]
+  },
+  {
+   "id": "g3",
+   "type": "reasoning",
+   "pass": false,
+   "why": [
+    "did not cite project/terminal-first",
+    "did not cite project/explicit-user-changes",
+    "did not mention 'user'"
+   ],
+   "status": "answered",
+   "answer": "- Interface: A terminal application for the MVP [1]. A web interface is deferred [1].",
+   "cited": [
+    "project/blue-whale-spec"
+   ]
+  },
+  {
+   "id": "g4",
+   "type": "edge",
+   "pass": true,
+   "why": [],
+   "status": "answered",
+   "answer": "After an AI response is produced, the system compares it with that state to identify contradictions or task drift [1]. Example:\n\n- User establishes: \"We are using PostgreSQL.\"\n- Later AI response: \"Let's configure MongoDB.\"\n- No user instruction changed the database [1]. **Drift detection:** given a conversation where PostgreSQL is an established decision and the user has not changed it, a candidate AI response proposing MongoDB must be marked as drift and the conflicting decision must be identified [2]. If the user explicitly changes the decision to MongoDB, the same response must not be classified as drift [2].",
+   "cited": [
+    "project/blue-whale-spec",
+    "project/blue-whale-spec"
+   ]
+  },
+  {
+   "id": "g5",
+   "type": "refusal",
+   "pass": true,
+   "why": [],
+   "status": "refused",
+   "answer": "I can't answer that from Blue Whale's sources.",
+   "cited": []
+  }
+ ]
+}
