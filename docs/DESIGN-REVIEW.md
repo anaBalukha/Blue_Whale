@@ -8,7 +8,7 @@ Members:
 - Mikheili Kakhniashvili (@mishakakhniashvili)
 - Aleksandre Giorgashvili (@lexokodavs)
 
-Graded tag: design-review (not yet created)
+Graded tag: `design-review`
 
 ## 1 · Problem, users, success criteria (2 points)
 
