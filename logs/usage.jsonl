@@ -1,0 +1,10 @@
+{"ts": "2026-10-20T17:48:14+00:00", "kind": "chat", "model": "liquid/lfm-2.5-2.6b:free", "tokens_in": 57, "tokens_out": 323, "cost_usd": 0.0, "latency_ms": 14193}
+{"ts": "2026-10-20T17:56:52+00:00", "kind": "chat", "model": "cohere/north-mini-code:free", "tokens_in": 28, "tokens_out": 137, "cost_usd": 0.0, "latency_ms": 3923}
+{"ts": "2026-10-20T17:56:55+00:00", "kind": "chat", "model": "nvidia/nemotron-3.5-content-safety:free", "tokens_in": 491, "tokens_out": 5, "cost_usd": 0.0, "latency_ms": 1524}
+{"ts": "2026-10-20T17:57:02+00:00", "kind": "chat", "model": "nvidia/nemotron-3.5-lightning:free", "tokens_in": 52, "tokens_out": 477, "cost_usd": 0.0, "latency_ms": 4939}
+{"ts": "2026-10-20T17:57:11+00:00", "kind": "chat", "model": "liquid/lfm-2.5-2.6b:free", "tokens_in": 42, "tokens_out": 329, "cost_usd": 0.0, "latency_ms": 7239}
+{"ts": "2026-10-20T17:57:16+00:00", "kind": "chat", "model": "cohere/north-mini-code:free", "tokens_in": 28, "tokens_out": 354, "cost_usd": 0.0, "latency_ms": 3080}
+{"ts": "2026-10-20T17:57:21+00:00", "kind": "chat", "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "tokens_in": 50, "tokens_out": 112, "cost_usd": 0.0, "latency_ms": 3004}
+{"ts": "2026-10-20T17:57:29+00:00", "kind": "chat", "model": "nvidia/nemotron-3.5-lightning:free", "tokens_in": 50, "tokens_out": 320, "cost_usd": 0.0, "latency_ms": 5167}
+{"ts": "2026-10-20T17:57:33+00:00", "kind": "chat", "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "tokens_in": 50, "tokens_out": 88, "cost_usd": 0.0, "latency_ms": 2415}
+{"ts": "2026-10-20T17:57:41+00:00", "kind": "chat", "model": "liquid/lfm-2.5-2.6b:free", "tokens_in": 41, "tokens_out": 307, "cost_usd": 0.0, "latency_ms": 6004}

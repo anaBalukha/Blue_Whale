@@ -1,0 +1,11 @@
+{
+  "evidence_type": "real OpenRouter chat calls; not full RAG",
+  "total_real_calls": 10,
+  "parsed_json_successes": 7,
+  "json_decode_failures": 3,
+  "median_tokens_in": 50.0,
+  "median_tokens_out": 313.5,
+  "median_latency_ms": 4431.0,
+  "median_cost_usd": 0.0,
+  "limitations": "Free-model chat calls only; embedding and full RAG costs not measured."
+}
