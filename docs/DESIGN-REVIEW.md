@@ -44,22 +44,30 @@ drift detection and recovery. The shared team
 
 ```mermaid
 flowchart TD
-    U[User] --> J[Structured JSON input]
-    J --> D[Team Drift Checker]
-    D --> O[Detection result]
-    D -.-> S[Planned trusted state recovery]
-    S -.-> M[Planned OpenRouter model call]
-    M -.-> V[Planned response validation]
-    V -.-> O
-    V -.-> H[Human clarification]
-    J --> R[Lab 4 hybrid retrieval]
-    R --> A[Grounded answer and citation checks]
-    A --> O
-    J -.-> C[Planned Lab 3 confidence checks]
-    C -.-> H
+    U[User] --> D[Team drift checker]
+    D --> S[Conflict decision and safe log]
+
+    U --> Q[Document question]
+    C[Trusted source corpus] --> CH[Chunk documents]
+    CH --> E[Embedding model]
+    E --> IX[Local search index]
+    Q --> R[Hybrid vector and BM25 retrieval]
+    IX --> R
+    R --> M[Chat model for grounded JSON]
+    M --> V[Citation validation]
+    V --> O[Cited answer or refusal]
+    V --> L[Answer and refusal log]
+
+    U -.-> IMG[Image input - Lab 3 PR 13]
+    IMG -.-> VM[Vision model]
+    VM -.-> CP[Confidence policy]
+    CP -.-> H[Human confirmation or review]
+
+    D -.-> REC[Planned recovery generation]
+    REC -.-> H
 ```
 
-Solid arrows show the existing prototype workflow.
+Solid arrows describe the implemented components; model calls have been simulated in the offline RAG tests.
 Dashed arrows represent planned components, not working code.
 
 | Model call | Input | Output | Status |
@@ -67,7 +75,7 @@ Dashed arrows represent planned components, not working code.
 | Recovery | Trusted state and AI response | Corrected answer | Planned |
 | Grounded answer | Retrieved documents | Cited answer or refusal | Implemented; offline-tested |
 
-No live LLM calls or token usage logs are available yet.
+Ten real chat-only OpenRouter calls were logged. Full live RAG evaluation is still pending.
 
 ## 3 · Risks and safety threats (2 points)
 
@@ -126,8 +134,7 @@ A complete live-model golden run has not been recorded.
 
 ### Planned evaluation
 
-Before the Design Review, create and execute a team golden set
-including a case that requires refusal.
+The five-case team golden set was executed offline. A full live-model golden run remains future work.
 
 By Week 11, expand to 10 questions:
 - 3 factual
@@ -143,12 +150,24 @@ of a new application version.
 
 ### Current measurements
 
-The individual HW1 drift checker uses deterministic Python
-comparisons and requires zero LLM tokens.
+Ten real OpenRouter free-model chat calls were executed.
+Seven returned valid parsed JSON; three produced JSON decoding
+errors. The calls tested chat and structured output, not
+the complete retrieval and grounding pipeline.
 
-The team application has no recorded real model calls.
-Therefore, median tokens, cost, and latency from 10 real
-requests cannot yet be reported.
+Evidence: [actual usage log](../logs/usage.jsonl) and
+[measurement summary](../evals/results/live-free-chat-summary.json).
+
+| Metric | Measured median |
+|---|---:|
+| Input tokens | 50 |
+| Output tokens | 313.5 |
+| Latency | 4,431 ms |
+| Reported cost per call | $0.00 |
+
+The selected free providers have usage limits. These measurements
+do not establish a sustainable zero-cost production service.
+Embedding and full-RAG request costs remain unmeasured.
 
 ### Estimated model cost (not measured)
 
@@ -209,6 +228,6 @@ Both decisions are also reflected in [spec.md](spec.md).
 
 - Merge the Lab 3 multimodal feature (PR #13).
 - Run the full golden set with real models.
-- Record at least ten real model calls and their usage.
+- Measure embeddings and full retrieval-plus-answer requests; ten real chat-only calls are recorded.
 - Integrate and test trusted-state recovery.
 - Obtain all three team members' genuine contract approval.
