@@ -1,36 +1,27 @@
-# Spec v0 · [Product name]
+# Versioned Checkpoint Builder — Specification
 
-*One page. Rough is fine, empty is not. This grows into your Week 4 Design Review.*
+## 1. Goal and Objectives
+The Versioned Checkpoint Builder is a deterministic Python CLI tool designed for developers and AI assistants managing confirmed project decisions. It takes a previous conversation checkpoint and a set of explicit user-authorized changes, merges them securely, increments the version number only when effective changes occur, and outputs a structured JSON checkpoint.
 
-## Problem
-Two sentences. Who hurts, and how, today.
+## 2. Users and Context
+- **Primary Users:** Students and software developers managing conversational state transitions in structured assistants.
+- **Context:** Operates offline without network dependencies or LLM calls, ensuring predictable state progression based solely on verified user input.
 
-## Users
-Who exactly. "Students" is too broad; "students who miss club events because posters are the only announcement" is right.
+## 3. Input / Output Contracts
+- **Input:** A single JSON-encoded string argument containing:
+  - `previous`: Object with integer `version` ($\ge 0$) and `decisions` dictionary (string keys and values).
+  - `user_changes`: Object with `decisions` updates.
+- **Output (Success - Exit Code 0):** JSON object containing:
+  - `checkpoint`: Updated version number and merged decisions dictionary.
+  - `changed_fields`: Sorted list of keys whose values actually changed.
+- **Output (Error - Exit Code 2):** JSON object: `{"error": {"code": "INVALID_INPUT", "message": "..."}}`.
 
-## Success criteria
-Three, each measurable. If you cannot measure it, rewrite it.
-1.
-2.
-3.
+## 4. Testable Acceptance Criteria
+1. New or modified keys are merged into a copy of previous decisions while preserving unchanged keys.
+2. Only effective changes appear in sorted `changed_fields`; repeating an existing value is ignored.
+3. Version increments by exactly 1 if and only if at least one effective change occurs.
+4. Malformed JSON, missing fields, invalid version types, or non-string values return `INVALID_INPUT` and exit code 2.
 
-## Core feature (Weeks 2 to 4 scope)
-The one thing your product does first. One paragraph.
-
-## Context list
-What information must the AI see to do its job? Where does each piece live? (This is the Context as Budget pattern, in writing.)
-
-## Acceptance criteria
-Three concrete "done when" statements for the core feature.
-1.
-2.
-3.
-
-## Napkin math
-requests/day × (tokens in × price in + tokens out × price out) × 30 = $____ /month on [model].
-
-## Risks and safety
-Two things most likely to go wrong, plus one way a user could misuse this. One line each.
-
-## Out of scope (for now)
-List it so nobody builds it by accident.
+## 5. Setup, Run, and Test Commands
+- **Run:** `python hw1/lexokodavs/src/checkpoint_builder.py '<JSON_PAYLOAD>'`
+- **Test:** `python -m pytest hw1/lexokodavs -v`

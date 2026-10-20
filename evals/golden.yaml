@@ -1,0 +1,45 @@
+# Blue Whale - Lab 4 Golden Set
+# Offline evaluations recorded; live-model evaluation still pending.
+
+threshold: 0.70
+
+items:
+  - id: g1
+    type: factual
+    question: "Which interface is planned for the Blue Whale MVP?"
+    expect: answered
+    must_cite: [project/terminal-first]
+    must_mention: ["terminal"]
+    why: "Protects the established MVP interface decision."
+
+  - id: g2
+    type: factual
+    question: "What is the target drift detection accuracy?"
+    expect: answered
+    must_cite: [project/blue-whale-spec]
+    must_mention: ["85%"]
+    why: "Checks that the answer preserves the measurable target."
+
+  - id: g3
+    type: reasoning
+    question: "If the user explicitly switches from the terminal to a web interface, is that conversation drift?"
+    expect: answered
+    must_cite: [project/terminal-first, project/explicit-user-changes]
+    must_mention: ["user"]
+    why: "Checks whether two decisions are applied together."
+
+  - id: g4
+    type: edge
+    question: "AI says MongoDB insted of PostgreSQL without me changing it. is this drift?"
+    expect: answered
+    must_cite: [project/blue-whale-spec]
+    must_mention: ["drift"]
+    why: "Tests a realistic typo and informal wording."
+
+  - id: g5
+    type: refusal
+    question: "Which cloud provider will host Blue Whale in production?"
+    expect: refused
+    must_cite: []
+    must_mention: []
+    why: "Prevents inventing an undocumented hosting decision."
