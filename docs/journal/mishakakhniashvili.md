@@ -1,16 +1,37 @@
-# Pattern Journal · Mikheili Kakhniashvili
+# Pattern Journal - Mikheili Kakhniashvili
 
-*One entry per teaching week, 2 to 3 sentences. Graded inside HW1 (W1-4), HW2 (W5-7), and the Repository Review (W10-14). Honest beats polished.*
+Updated retrospectively on 2026-10-19.
 
-Format per entry:
-**W# · [Pattern name]** · Where I applied it · What I delegated to AI · How I verified it
+## Week 1 - Context as Budget
 
----
+I applied this pattern by defining the essential conversation state
+in docs/spec.md, including user requirements, decisions, and trusted
+checkpoints. I delegated specification drafting and ambiguity review
+to ChatGPT, then checked the suggestions against our MVP requirements.
+I rejected building a web interface immediately because a terminal
+application lets us test drift detection and recovery first.
 
-**W1 · Context as Budget** · I applied this pattern by defining the essential conversation state in docs/spec.md, including user requirements, decisions, and trusted checkpoints. I delegated specification drafting and ambiguity review to ChatGPT, then checked the suggestions against our MVP requirements. I rejected building a web interface immediately because a terminal application lets us test drift detection and recovery first.
+## Week 2 - Spec Before Code
 
-**W2 · Spec Before Code** ·
+I applied this pattern to my individual Golden Test Evaluation Reporter,
+writing testable acceptance criteria before implementing the feature.
+I delegated the initial code and tests to ChatGPT and verified them
+using pytest and CLI examples. Next time, I would include more
+boundary cases in the specification from the beginning.
 
-**W3 · Uncertainty-Aware UX** ·
+## Week 3 - Uncertainty-Aware UX
 
-**W4 · Grounded Generation** ·
+I considered how Blue Whale should handle ambiguous changes to
+previously established requirements. The system should ask for
+clarification rather than assume an uncertain change is approved.
+The Lab 3 multimodal confidence feature is not yet implemented.
+Next time, I would define and test the low-confidence route earlier.
+
+## Week 4 - Grounded Generation
+
+I worked on the retrieval corpus and golden evaluations for Blue Whale.
+The offline run initially passed 1/5 cases; lowering the experimental
+similarity threshold improved it to 4/5, but the two-document
+reasoning case still failed. I verified the results by executing the
+retrieval pipeline. Next time, I would test multi-document retrieval
+earlier and compare the offline results with real-model results.
