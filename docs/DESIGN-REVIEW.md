@@ -31,7 +31,7 @@ Full product specification: [docs/spec.md](spec.md).
 **Current evidence.** An individual HW1 prototype implements
 structured decision comparison and explicit user overrides.
 It passed 4 automated tests and 3 manually executed golden cases.
-This prototype is not yet integrated into the team application.
+The shared drift checker is now integrated in src/drift_core.py (PR #8).
 
 Prototype: [Ana's HW1](../hw1/anaBalukha/).
 
@@ -39,21 +39,22 @@ Prototype: [Ana's HW1](../hw1/anaBalukha/).
 ## 2 · Architecture and data flow (2 points)
 
 Blue Whale is planned as a terminal application for conversation
-drift detection and recovery. Currently, only Ana's individual
-[drift checker](../hw1/anaBalukha/src/drift_checker.py) is implemented.
+drift detection and recovery. The shared team
+[drift checker](../src/drift_core.py) and Lab 4 retrieval are implemented.
 
 ```mermaid
 flowchart TD
     U[User] --> J[Structured JSON input]
-    J --> D[HW1 Drift Checker]
+    J --> D[Team Drift Checker]
     D --> O[Detection result]
     D -.-> S[Planned trusted state recovery]
     S -.-> M[Planned OpenRouter model call]
     M -.-> V[Planned response validation]
     V -.-> O
     V -.-> H[Human clarification]
-    J -.-> R[Planned Lab 4 retrieval]
-    R -.-> M
+    J --> R[Lab 4 hybrid retrieval]
+    R --> A[Grounded answer and citation checks]
+    A --> O
     J -.-> C[Planned Lab 3 confidence checks]
     C -.-> H
 ```
@@ -64,7 +65,7 @@ Dashed arrows represent planned components, not working code.
 | Model call | Input | Output | Status |
 |---|---|---|---|
 | Recovery | Trusted state and AI response | Corrected answer | Planned |
-| Grounded answer | Question and retrieved documents | Cited answer or refusal | Planned |
+| Grounded answer | Retrieved documents | Cited answer or refusal | Implemented; offline-tested |
 
 No live LLM calls or token usage logs are available yet.
 
@@ -75,12 +76,11 @@ No live LLM calls or token usage logs are available yet.
 | Outdated conversation state | AI follows an old decision | Explicit user changes override stored decisions; structured comparison exists in [HW1](../hw1/anaBalukha/src/drift_checker.py) | Ana |
 | False drift detection | Valid AI response gets rejected | Expand labeled tests, including intentional user changes; planned Week 5 | Mikheili |
 | Private data exposure | Sensitive conversation information is revealed | Keep minimum required state in memory; never commit keys or real conversations | Ana |
-| Ungrounded AI answers | AI invents facts or citations | Implement Lab 4 citation verification and refusal when evidence is insufficient; planned Week 5 | Mikheili |
+| Ungrounded AI answers | AI invents facts or citations | Citation validation and refusal implemented in src/answer.py; offline tests pass | Mikheili |
 | Low-confidence or failed recovery | User receives an unreliable correction | Implement Lab 3 confidence handling and request human clarification; planned Week 5 | Ana |
 | Model outage or unexpected cost | Recovery fails or costs increase | Add error handling, usage logs and a spending limit; planned Week 5 | Ana |
 
-**Current limitations:** The Lab 3 confidence policy and Lab 4
-citation/refusal mechanism are not yet implemented. The owners
+**Current limitations:** Lab 3 PR #13 is pending. Lab 4 is implemented, but full live-model evaluation is missing. The owners
 above are proposed assignments pending team confirmation.
 
 ## 4 · Evaluation plan (2 points)
@@ -102,11 +102,27 @@ The four automated pytest tests also passed.
 These results verify the individual structured drift checker,
 not the complete team application or Lab 4 RAG system.
 
-### Missing team evaluation
+### Team Lab 4 evaluation evidence
 
-The required Lab 4 golden set at evals/golden.yaml
-and its committed evaluation result are not available yet.
-A team-level pass rate cannot currently be reported.
+The team implemented hybrid retrieval, grounded answers,
+citation verification, and refusal handling in `src/`.
+The implementation was merged through PR #9.
+
+The five-case golden set is committed at
+[evals/golden.yaml](../evals/golden.yaml).
+
+[Offline evaluation results](../evals/results/2026-10-20-0251-offline-k3.json):
+**4/5 passed (80%)** against the 0.70 pass threshold.
+
+- Two factual cases: passed.
+- One reasoning case (g3): failed because the required
+  two-document evidence was not cited.
+- One edge case: passed.
+- One refusal case: passed.
+
+Offline mode uses simulated embeddings and answers.
+These results do not demonstrate real-model answer quality.
+A complete live-model golden run has not been recorded.
 
 ### Planned evaluation
 
@@ -189,8 +205,10 @@ All three members must still approve and sign the contract.
 
 Both decisions are also reflected in [spec.md](spec.md).
 
-### Outstanding implementation evidence
+### Remaining implementation evidence
 
-- Integrate the drift checker into the team application.
-- Commit and run the Lab 4 golden evaluation.
-- Collect real model token, cost, and latency logs.
+- Merge the Lab 3 multimodal feature (PR #13).
+- Run the full golden set with real models.
+- Record at least ten real model calls and their usage.
+- Integrate and test trusted-state recovery.
+- Obtain all three team members' genuine contract approval.
