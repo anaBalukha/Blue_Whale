@@ -38,3 +38,7 @@ Product specification: docs/spec.md
 - Read, print, commit, or expose API keys or .env contents.
 - Delete, skip, or weaken tests to make them pass.
 - Override explicit user decisions with AI-generated assumptions.
+
+
+## Safety & Operational Rules
+- **Never:** Accept low-confidence extracted values without confirmation; invent a value if evidence is missing; emit a grounded answer without valid citations; weaken goldens to make tests pass.

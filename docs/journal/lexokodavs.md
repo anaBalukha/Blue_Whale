@@ -1,16 +1,21 @@
-# Pattern Journal · Aleksandre Giorgashvili
+# Pattern Journal — Aleksandre Giorgashvili (Retrospective)
 
-*One entry per teaching week, 2 to 3 sentences. Graded inside HW1 (W1-4), HW2 (W5-7), and the Repository Review (W10-14). Honest beats polished.*
+## Week 1: Context as Budget
+- **Observation:** Managing context efficiently is crucial when building modular system features alongside team members.
+- **AI Delegation & Verification:** Kept code footprints minimal and self-contained within assigned directories to prevent interference.
+- **Improvement:** Maintain clear boundaries on shared dependencies from the outset.
 
-Format per entry:
-**W# · [Pattern name]** · Where I applied it · What I delegated to AI · How I verified it
+## Week 2: Spec Before Code
+- **Observation:** Writing clear input/output contracts and error handling specs before implementation prevents ambiguity.
+- **AI Delegation & Verification:** Used explicit validation rules for JSON payloads and data types.
+- **Improvement:** Always formalize edge cases in the spec before writing test stubs.
 
----
+## Week 3: Uncertainty-Aware UX
+- **Observation:** Systems must handle malformed input gracefully with deterministic error codes rather than unhandled exceptions.
+- **AI Delegation & Verification:** Enforced explicit exit code `2` and structured error JSON payloads.
+- **Improvement:** Expand validation coverage for deeply nested inputs.
 
-**W1 · Context as Budget** ·
-
-**W2 · Spec Before Code** ·
-
-**W3 · Uncertainty-Aware UX** ·
-
-**W4 · Grounded Generation** ·
+## Week 4: Grounded Generation
+- **Observation:** State progression should rely strictly on verified user input rather than inferred AI assumptions.
+- **AI Delegation & Verification:** Ensured only authorized `user_changes` are accepted into checkpoints.
+- **Improvement:** Keep state mutation logic purely deterministic.
