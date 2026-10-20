@@ -1,4 +1,4 @@
-# Team Repo Guide · [Team name]
+# Team Repo Guide · Blue Whale
 
 *Your team's GitHub rulebook for the whole capstone, from Lab 2 to Demo Day. Copy this file to `docs/TEAM-REPO.md`, fill in section 1 together in Lab 2, and keep it true. Sections 2 to 11 are the course standard: they change only with my agreement (last section).*
 
@@ -10,9 +10,9 @@
 
 | Member | GitHub username | Standing role |
 |---|---|---|
-| | | Repo keeper |
-| | | Spec keeper |
-| | | Eval keeper (from Week 4) |
+| Ana Balukhashvili | anaBalukha | Repo keeper |
+| Aleksandre Giorgashvili | lexokodavs | Spec keeper |
+| Mikheili Kakhniashvili | mishakakhniashvili | Eval keeper |
 | | | |
 
 - **Repo keeper:** owns the repo; access, settings, branch rules, CI, tags. Makes the "ask first" changes to `.github/`.
@@ -23,8 +23,8 @@ Teams of two: each person holds two roles. Roles decide who keeps a file honest,
 
 **Slice rota (recommended):** the person who drives the agent rotates every slice, and the reviewer is the next person in the rota, so everyone drives at least one slice before Week 4.
 
-Our capstone in one sentence: [product, for whom, why]
-Repo: [link] · Instructor access: [ZA-KIU collaborator / public] · Team OpenRouter key issued to: [name] (never paste the key here)
+Our capstone in one sentence: Blue Whale helps students and developers detect AI conversation drift and recover trusted requirements.
+Repo: https://github.com/anaBalukha/Blue_Whale · Instructor access: public repository · Team OpenRouter key custodian: to be confirmed (never paste the key here)
 
 ---
 
