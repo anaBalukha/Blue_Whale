@@ -118,3 +118,14 @@ Conversation data may contain private or confidential information, so the MVP sh
 - Detection: At least 85% accuracy on 50 or more labeled cases, including drift, no drift, and intentional changes.
 - Recovery: At least 80% of confirmed drift cases must produce responses consistent with the latest trusted state.
 - Consistency: At least 90% of successful recoveries must remain consistent in the next response.
+
+
+## First slice (Lab 2)
+The core team drift-recovery function (`src/drift_core.py`) accepts `state`, `candidate`, and optional `user_changes` (all dictionaries of string -> string). 
+- **Input Contract:** `state` (established checkpoint decisions), `candidate` (AI generated candidate response/decisions), `user_changes` (explicitly authorized user overrides).
+- **Output Contract:** Returns a dictionary containing `status` (e.g. `"ok"`, `"conflict"`), `effective_state`, and `conflicts`. Invalid input structures yield a structured `INVALID_INPUT` error.
+- **Acceptance Criteria:** 
+  1. Contradictions between candidate output and established state are successfully flagged.
+  2. Explicit user changes override established state and candidate suggestions.
+  3. Malformed inputs return structured error handling.
+- **Authority Order:** Latest explicit user change > confirmed checkpoint > older unsuperseded user decision > AI assumptions. AI summaries must never override explicit user changes.
