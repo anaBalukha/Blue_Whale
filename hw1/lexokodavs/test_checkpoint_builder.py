@@ -7,8 +7,6 @@ def run_builder(arg_str):
     res = subprocess.run(cmd, capture_output=True, text=True)
     return res.returncode, res.stdout.strip()
 
-fn = "hw1/lexokodavs/src/checkpoint_builder.py"
-
 def test_checkpoint_builder_override():
     payload = {
         "previous": {"version": 1, "decisions": {"database": "PostgreSQL", "framework": "FastAPI"}},

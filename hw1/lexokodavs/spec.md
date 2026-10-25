@@ -1,6 +1,9 @@
 # Versioned Checkpoint Builder — Specification
 
 ## 1. Goal and Objectives
+<<<<<<< HEAD
+The Versioned Checkpoint Builder is a deterministic Python CLI tool designed for developers and AI assistants managing confirmed project decisions.
+=======
 The Versioned Checkpoint Builder is a deterministic Python CLI tool designed for developers and AI assistants managing confirmed project decisions. It takes a previous conversation checkpoint and a set of explicit user-authorized changes, merges them securely, increments the version number only when effective changes occur, and outputs a structured JSON checkpoint.
 
 ## 2. Users and Context
@@ -25,3 +28,4 @@ The Versioned Checkpoint Builder is a deterministic Python CLI tool designed for
 ## 5. Setup, Run, and Test Commands
 - **Run:** `python hw1/lexokodavs/src/checkpoint_builder.py '<JSON_PAYLOAD>'`
 - **Test:** `python -m pytest hw1/lexokodavs -v`
+>>>>>>> origin/main

@@ -28,7 +28,6 @@ def main():
         print(json.dumps(error_response("Both 'previous' and 'user_changes' must be objects.")))
         sys.exit(2)
 
-    # Validate previous structure
     prev_version = previous.get("version")
     prev_decisions = previous.get("decisions")
 
@@ -45,13 +44,11 @@ def main():
             print(json.dumps(error_response("Decision keys must be non-empty strings and values must be strings.")))
             sys.exit(2)
 
-    # Validate user_changes structure
     for k, v in user_changes.items():
         if not isinstance(k, str) or not k or not isinstance(v, str):
             print(json.dumps(error_response("Change keys must be non-empty strings and values must be strings.")))
             sys.exit(2)
 
-    # Compute changes and new checkpoint
     new_decisions = copy.deepcopy(prev_decisions)
     changed_fields = []
 
