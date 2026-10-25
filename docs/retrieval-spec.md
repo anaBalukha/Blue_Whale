@@ -21,7 +21,7 @@ by trusted documents.
 
 - Split on Markdown headings or checkpoint boundaries.
 - Include document title, source path, and version.
-- Maximum chunk size: 800 characters.
+- Chunk target: 1200 characters (src/chunk.py; an unsplittable long paragraph may exceed this target).
 - Overlap: one paragraph when splitting long sections.
 - Preserve document IDs for citation validation.
 
@@ -30,9 +30,9 @@ by trusted documents.
 - Embedding model: openai/text-embedding-3-small
 - Reference price: $0.02 per million tokens (2026-10-19).
 - Provider: OpenRouter.
-- Retriever: vector similarity, k = 3.
-- Starting cosine similarity threshold: 0.70.
-- Threshold must be tested and tuned using real results.
+- Retriever: hybrid vector similarity and BM25; k=3 used in the recorded offline evaluation.
+- Initial experimental threshold: 0.70 (offline baseline 1/5). Runtime default: 0.25; the recorded 4/5 run used BLUE_WHALE_MIN_SCORE=0.30.
+- Current tuning was performed offline; live full-RAG evaluation remains pending.
 - Record the embedding model used to build each index.
 
 ## 4. Answering
@@ -53,7 +53,7 @@ by trusted documents.
 Example: "The MVP uses a terminal interface [1]."
 Source [1]: project/terminal-first
 
-Refusal: "I cannot verify that from the saved context."
+Refusal: "I can't answer that from Blue Whale's sources."
 Next action: Ask the user to clarify or confirm the decision.
 
 ## 6. Acceptance criteria
@@ -68,5 +68,5 @@ Next action: Ask the user to clarify or confirm the decision.
 - AC5: The five-case live golden evaluation reaches
   a pass rate of at least 0.70.
 
-Status: Specification only. Implementation and live
-evaluation have not yet been completed.
+Status: Retrieval, citation checking and refusals are implemented and offline-tested.
+Live end-to-end RAG evaluation is not yet completed.
