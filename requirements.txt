@@ -4,3 +4,4 @@ PyYAML
 pydantic
 openai
 Pillow
+mcp>=2.3,<3

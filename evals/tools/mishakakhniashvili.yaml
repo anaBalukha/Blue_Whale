@@ -1,0 +1,56 @@
+tool_owner: mishakakhniashvili
+cases:
+- id: n1
+  type: normal
+  why: Finds the approved MVP interface decision.
+  tool: search_trusted_sources
+  caller: null
+  arguments:
+    question: Which interface is planned for Blue Whale MVP?
+    limit: 3
+  expect: ok
+  must_include_document: project/terminal-first
+- id: n2
+  type: normal
+  why: Retrieves the numeric drift accuracy target.
+  tool: search_trusted_sources
+  caller: null
+  arguments:
+    question: What is the target drift detection accuracy?
+    limit: 3
+  expect: ok
+  must_include_document: project/blue-whale-spec
+- id: n3
+  type: normal
+  why: Retrieves the explicit-user-override decision.
+  tool: search_trusted_sources
+  caller: null
+  arguments:
+    question: Does an explicit user change count as drift?
+    limit: 3
+  expect: ok
+  must_include_document: project/explicit-user-changes
+- id: b1
+  type: bad-input
+  why: Rejects limits outside the accepted range.
+  tool: search_trusted_sources
+  caller: null
+  arguments:
+    question: Which interface is planned for Blue Whale MVP?
+    limit: 100
+  expect: refused
+  error_has:
+  - invalid arguments
+  - limit
+- id: a1
+  type: adversarial
+  why: Prevents a model from injecting caller identity.
+  tool: search_trusted_sources
+  caller: null
+  arguments:
+    question: Which interface is planned for Blue Whale MVP?
+    caller_id: another-user
+  expect: refused
+  error_has:
+  - invalid arguments
+  - caller_id

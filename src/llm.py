@@ -137,3 +137,48 @@ def embed(texts: list[str]) -> np.ndarray:
 def embed_model_name() -> str:
     """The model the index was (or will be) built with. Index and queries must match."""
     return offline.MODEL if OFFLINE else EMBED_MODEL
+
+
+def complete_tools(messages: list[dict], tool_schemas: list[dict]) -> dict:
+    """Ask the model for one response or a tool request.
+
+    The model only requests tools. src.act decides whether they run.
+    Every real model call is recorded through log_usage().
+    """
+    if OFFLINE:
+        raise RuntimeError(
+            "Offline tool calling needs an injected test model. "
+            "Set BLUE_WHALE_OFFLINE=0 for a real model request."
+        )
+
+    started = time.perf_counter()
+    response = get_client().chat.completions.create(
+        model=CHAT_MODEL,
+        messages=messages,
+        tools=tool_schemas,
+        tool_choice="auto",
+        temperature=0,
+    )
+    log_usage(
+        response,
+        latency_ms=ms_since(started),
+        kind="chat",
+    )
+
+    message = response.choices[0].message
+    calls = [
+        {
+            "id": call.id,
+            "name": call.function.name,
+            "arguments": call.function.arguments or "{}",
+        }
+        for call in (message.tool_calls or [])
+    ]
+
+    extra = getattr(message, "model_extra", None) or {}
+
+    return {
+        "content": message.content,
+        "tool_calls": calls,
+        "reasoning_details": extra.get("reasoning_details"),
+    }
