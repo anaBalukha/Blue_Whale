@@ -1,6 +1,7 @@
 """Validate and execute model-requested tools."""
 import json
 import os
+import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,11 +12,44 @@ from .misha_retrieval_tool import ToolFailure
 from .tools import Tool
 
 
+SAFE_IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}")
+
+
+def safe_identifier(value: object) -> str:
+    """Do not reflect paths or unusual input into errors or logs."""
+    if isinstance(value, str) and SAFE_IDENTIFIER.fullmatch(value):
+        return value
+    return "invalid_identifier"
+
+
 def brief(error: ValidationError) -> str:
-    return "; ".join(
-        f"{'.'.join(map(str, e['loc']))}: {e['msg']}"
-        for e in error.errors()
-    )
+    """Provide actionable validation errors without echoing input."""
+    messages = {
+        "extra_forbidden": "Remove this unexpected argument",
+        "missing": "Provide this required argument",
+        "string_type": "Provide a string",
+        "int_type": "Provide an integer",
+        "string_too_short": "Text is too short",
+        "string_too_long": "Text is too long",
+        "string_pattern_mismatch": "Use only permitted characters",
+        "greater_than_equal": "Value is below the allowed minimum",
+        "less_than_equal": "Value is above the allowed maximum",
+    }
+
+    problems = []
+    for issue in error.errors(include_input=False):
+        location = ".".join(
+            safe_identifier(part)
+            for part in issue["loc"]
+        ) or "arguments"
+
+        message = messages.get(
+            issue["type"],
+            "Use a value that satisfies the tool contract",
+        )
+        problems.append(f"{location}: {message}")
+
+    return "; ".join(problems)
 
 
 def call_tool(
@@ -24,8 +58,13 @@ def call_tool(
     caller: str | None,
 ) -> dict:
     started = time.perf_counter()
-    name = call.get("name", "")
-    tool = allowed.get(name)
+    requested_name = call.get("name", "")
+    name = safe_identifier(requested_name)
+    tool = (
+        allowed.get(requested_name)
+        if isinstance(requested_name, str)
+        else None
+    )
 
     result = None
     error = None
@@ -52,6 +91,11 @@ def call_tool(
                     result = tool.run(args).model_dump(mode="json")
             except ToolFailure as exc:
                 error = str(exc)
+            except Exception:
+                error = (
+                    "Tool execution failed unexpectedly. "
+                    "Ask the operator to check the service, then retry."
+                )
 
     line = {
         "ts": datetime.now(timezone.utc).isoformat(),
