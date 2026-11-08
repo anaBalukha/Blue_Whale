@@ -8,13 +8,19 @@ Question = Annotated[
     Field(
         min_length=8,
         max_length=160,
+        description="Question about trusted Blue Whale project documents.",
         pattern=r"^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$",
     ),
 ]
 
 Limit = Annotated[
     int,
-    Field(ge=1, le=5, strict=True),
+    Field(
+        ge=1,
+        le=5,
+        strict=True,
+        description="Maximum number of trusted sources to retrieve (1 to 5).",
+    ),
 ]
 
 

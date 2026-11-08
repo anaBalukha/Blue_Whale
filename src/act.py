@@ -1,7 +1,6 @@
 """Validate and execute model-requested tools."""
 import json
 import os
-import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,17 +11,7 @@ from .misha_retrieval_tool import ToolFailure
 from .tools import Tool
 
 
-SAFE_IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}")
-
-
-def safe_identifier(value: object) -> str:
-    """Do not reflect paths or unusual input into errors or logs."""
-    if isinstance(value, str) and SAFE_IDENTIFIER.fullmatch(value):
-        return value
-    return "invalid_identifier"
-
-
-def brief(error: ValidationError) -> str:
+def brief(error: ValidationError, known_fields: set[str]) -> str:
     """Provide actionable validation errors without echoing input."""
     messages = {
         "extra_forbidden": "Remove this unexpected argument",
@@ -39,7 +28,8 @@ def brief(error: ValidationError) -> str:
     problems = []
     for issue in error.errors(include_input=False):
         location = ".".join(
-            safe_identifier(part)
+            part if isinstance(part, str) and part in known_fields
+            else "unexpected_argument"
             for part in issue["loc"]
         ) or "arguments"
 
@@ -59,7 +49,11 @@ def call_tool(
 ) -> dict:
     started = time.perf_counter()
     requested_name = call.get("name", "")
-    name = safe_identifier(requested_name)
+    name = (
+        requested_name
+        if isinstance(requested_name, str) and requested_name in allowed
+        else "unknown_tool"
+    )
     tool = (
         allowed.get(requested_name)
         if isinstance(requested_name, str)
@@ -70,7 +64,7 @@ def call_tool(
     error = None
 
     if tool is None:
-        error = f"no tool named {name!r} is available"
+        error = "Tool not available. Choose an offered tool."
     else:
         try:
             raw = call.get("arguments", "{}")
@@ -79,7 +73,7 @@ def call_tool(
             args = tool.args.model_validate_json(raw)
         except (ValidationError, ValueError, TypeError) as exc:
             error = (
-                "invalid arguments: " + brief(exc)
+                "invalid arguments: " + brief(exc, set(tool.args.model_fields) | {"caller_id"})
                 if isinstance(exc, ValidationError)
                 else "invalid arguments: expected JSON"
             )
@@ -106,13 +100,21 @@ def call_tool(
         "latency_ms": int((time.perf_counter() - started) * 1000),
     }
 
-    path = Path(
-        os.environ.get("BLUE_WHALE_TOOL_LOG", "logs/tools.jsonl")
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        path = Path(
+            os.environ.get("BLUE_WHALE_TOOL_LOG", "logs/tools.jsonl")
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
 
-    with path.open("a", encoding="utf-8") as file:
-        file.write(json.dumps(line) + "\n")
+        with path.open("a", encoding="utf-8") as file:
+            file.write(json.dumps(line) + "\n")
+    except OSError:
+        line["ok"] = False
+        line["error"] = (
+            "Audit logging unavailable. "
+            "Ask the operator to restore logging and retry."
+        )
+        result = None
 
     return {**line, "result": result}
 

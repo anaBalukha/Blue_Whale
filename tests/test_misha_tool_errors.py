@@ -102,3 +102,74 @@ def test_normal_identity_spoofing_still_names_field(
 
     assert result["ok"] is False
     assert "caller_id" in result["error"]
+
+
+def test_private_looking_field_name_is_hidden(monkeypatch, tmp_path):
+    log = tmp_path / "tools.jsonl"
+    monkeypatch.setenv("BLUE_WHALE_TOOL_LOG", str(log))
+
+    result = call_tool(
+        {
+            "name": "search_trusted_sources",
+            "arguments": json.dumps({
+                "question": QUESTION,
+                "PrivateCaseAlice123": "secret",
+            }),
+        },
+        tools_for(None),
+        None,
+    )
+
+    assert result["ok"] is False
+    assert "unexpected_argument" in result["error"]
+    assert "PrivateCaseAlice123" not in str(result)
+    assert "PrivateCaseAlice123" not in log.read_text()
+
+
+def test_unknown_tool_name_is_hidden(monkeypatch, tmp_path):
+    log = tmp_path / "tools.jsonl"
+    monkeypatch.setenv("BLUE_WHALE_TOOL_LOG", str(log))
+
+    result = call_tool(
+        {
+            "name": "PrivateCaseAlice123",
+            "arguments": "{}",
+        },
+        tools_for(None),
+        None,
+    )
+
+    assert result["ok"] is False
+    assert result["tool"] == "unknown_tool"
+    assert "PrivateCaseAlice123" not in str(result)
+    assert "PrivateCaseAlice123" not in log.read_text()
+
+
+def test_unavailable_audit_log_returns_safe_failure(
+    monkeypatch, tmp_path
+):
+    from dataclasses import replace
+    from src.tools import SearchResult
+
+    # A directory cannot be opened as the JSONL log file.
+    monkeypatch.setenv("BLUE_WHALE_TOOL_LOG", str(tmp_path))
+
+    original = TOOLS["search_trusted_sources"]
+    fake = replace(
+        original,
+        run=lambda args: SearchResult(count=0, sources=[]),
+    )
+
+    result = call_tool(
+        {
+            "name": "search_trusted_sources",
+            "arguments": json.dumps({"question": QUESTION}),
+        },
+        {"search_trusted_sources": fake},
+        None,
+    )
+
+    assert result["ok"] is False
+    assert result["result"] is None
+    assert "Audit logging unavailable" in result["error"]
+    assert str(tmp_path) not in str(result)
