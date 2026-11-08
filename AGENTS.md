@@ -35,6 +35,8 @@ Product specification: docs/spec.md
 - Changing established project requirements.
 
 ## Never
+- Never add a tool that deletes or sends without asking first.
+- Never put a user, student, or account id in a tool's arguments.
 - Read, print, commit, or expose API keys or .env contents.
 - Delete, skip, or weaken tests to make them pass.
 - Override explicit user decisions with AI-generated assumptions.

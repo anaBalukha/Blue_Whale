@@ -31,3 +31,44 @@ class SearchArguments(BaseModel):
 
     question: Question
     limit: Limit = 3
+
+
+# Ana's HW2: bounded, read-only decision comparison.
+
+DecisionKey = Annotated[
+    str,
+    Field(
+        min_length=1,
+        max_length=32,
+        pattern=r"^[a-z][a-z0-9_]*$",
+        description="Lowercase decision field name.",
+    ),
+]
+
+DecisionValue = Annotated[
+    str,
+    Field(
+        min_length=1,
+        max_length=80,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9 _.,:/()+-]*$",
+        description="Single project decision value.",
+    ),
+]
+
+DecisionMap = Annotated[
+    dict[DecisionKey, DecisionValue],
+    Field(
+        min_length=1,
+        max_length=8,
+        description="One to eight project decisions.",
+    ),
+]
+
+
+class DriftArguments(BaseModel):
+    """Compare prior and proposed decisions; never modify either."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    state: DecisionMap
+    candidate: DecisionMap

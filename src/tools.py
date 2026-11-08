@@ -5,6 +5,8 @@ from typing import Callable
 from pydantic import BaseModel
 
 from .contracts import SearchArguments
+from .contracts import DriftArguments
+from .ana_drift_tool import DriftResult, run_drift
 from .index import IndexMismatch, load
 from .misha_retrieval_tool import ToolFailure, search_trusted_sources
 
@@ -62,6 +64,15 @@ TOOLS = {
         args=SearchArguments,
         run=run_search,
         description="Find cited evidence in trusted project documents.",
+    ),
+    "check_decision_drift": Tool(
+        name="check_decision_drift",
+        args=DriftArguments,
+        run=run_drift,
+        description=(
+            "Compare supplied prior and proposed project decisions "
+            "without modifying either."
+        ),
     ),
 }
 
