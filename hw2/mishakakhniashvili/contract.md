@@ -17,16 +17,26 @@ project documents without changing any data.
 
 ## Inputs
 
-| Argument | Type | Constraint |
-|---|---|---|
-| question | string | 8–160 characters; regex `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$`; starts with an ASCII letter or digit; permits ASCII letters, digits, spaces, and `, . : ; ? ! ' ( ) -` afterward |
-| limit | strict integer | 1–5; default 3; numeric strings and booleans are rejected |
-| unknown fields | any | Rejected by extra="forbid" |
+| Argument | Type | Constraint | Description the model reads |
+|---|---|---|---|
+| question | string | 8–160 characters; regex `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\\-]*$` | Question about trusted Blue Whale project documents. |
+| limit | strict integer | 1–5; default 3; no booleans or numeric strings | Maximum number of trusted sources to retrieve (1 to 5). |
+| unknown fields | any | Rejected by `extra="forbid"` | Not accepted |
 
 ## Output
 
-- count: number of returned sources
-- sources: document ID, chunk ID, title, section, excerpt and similarity score
+The successful tool returns:
+
+| Field | Type | Meaning |
+|---|---|---|
+| count | integer | Number of returned sources |
+| sources | array of objects | Matching trusted-source chunks |
+| sources[].chunk_id | string | Source chunk identifier |
+| sources[].document_id | string | Trusted document identifier |
+| sources[].title | string | Document title |
+| sources[].section | string | Document section |
+| sources[].excerpt | string | Source text, at most 350 characters |
+| sources[].score | number | Retrieval relevance score, rounded to four decimals |
 
 ## Expected failures
 
@@ -51,6 +61,39 @@ Source files:
 - src/mcp_server.py
 
 Golden cases: evals/tools/mishakakhniashvili.yaml
+
+## Audit log
+
+Default destination: `logs/tools.jsonl`, configurable through
+`BLUE_WHALE_TOOL_LOG`.
+
+Each successful log write contains:
+
+| Field | Type | Meaning |
+|---|---|---|
+| ts | string | UTC timestamp |
+| tool | string | Registered tool name or `unknown_tool` |
+| ok | boolean | Whether execution succeeded |
+| error | string or null | Sanitized failure message |
+| caller_type | string | `visitor` or `signed_in` |
+| latency_ms | integer | Execution duration in milliseconds |
+
+The audit log does not contain caller identity, raw questions,
+retrieved source content, or arbitrary unknown argument names.
+
+If the log cannot be written, `call_tool()` returns a structured
+failure without exposing the configured logging path.
+That failure cannot be recorded in the unavailable log.
+
+## Verification
+
+- Five HW2 goldens: `evals/tools/mishakakhniashvili.yaml`
+- Golden runner: `tests/test_tool_golden.py`
+- Gate verification: `tests/test_tool_gates.py`
+- MCP validation and schema parity: `tests/test_misha_mcp.py`
+- Error-handling regression tests: `tests/test_misha_tool_errors.py`
+- Red CI proof: PR #21, closed without merging
+- Original green product PR: #20
 
 ## Implementation links on main
 
