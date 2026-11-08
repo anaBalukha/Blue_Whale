@@ -81,3 +81,49 @@ The deliberately failing PR #21 was closed without merging.
 OpenRouter API key was unavailable.
 
 **Next time:** Test the MCP validation boundary earlier.
+
+## Entry 3 — Ana HW2 Drift Tool — 8 November 2026
+
+**Owner:** Ana Balukhashvili, Repo Keeper.
+
+**Delegated to:** ChatGPT (GPT-6), Autonomy Ladder rung 3.
+
+**Task:** Wrap the existing `src/drift_core.py` comparison
+function as a read-only, validated model-callable tool.
+Integrate it with the existing function-calling registry
+and MCP server.
+
+**Scope:** Ana's new tool, strict input contract, MCP
+registration, five golden cases, unit tests, and
+repository contract documentation.
+
+**What went wrong:** The initial generated integration
+script failed at an assertion while trying to update
+the assistant's system prompt. The source and MCP
+registration had already been written successfully.
+
+**Correction:** I repaired the prompt integration without
+repeating the earlier file-generation commands.
+
+**Environment issue:** The first test attempt used system
+Python without pytest. Activating the project's virtual
+environment resolved this.
+
+**Verification:** Six direct-tool tests, three MCP tests,
+eleven tool-golden checks, and the full 63-test project
+suite passed locally. Ana's four HW1 tests also passed.
+
+**Security:** The tool refuses model-supplied
+`user_changes`. It compares supplied prior decisions but
+cannot independently authenticate their origin.
+The caller must supply genuinely trusted state.
+
+**Limitations:** No live-model tool invocation or external
+MCP-host demonstration is claimed. GitHub CI and teammate
+review are still required.
+
+**Next time:** Inspect exact integration anchors before
+running automated edits, and verify the active Python
+environment before testing.
+
+**Time spent:** Not measured reliably.

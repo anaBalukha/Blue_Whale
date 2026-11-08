@@ -1,0 +1,76 @@
+tool_owner: anaBalukha
+
+cases:
+  - id: ana_n1
+    type: normal
+    why: Detects a proposed database change.
+    tool: check_decision_drift
+    caller: null
+    arguments:
+      state:
+        database: PostgreSQL
+      candidate:
+        database: MongoDB
+    expect: ok
+    result_has:
+      status: drift
+
+  - id: ana_n2
+    type: normal
+    why: Accepts a proposal that matches the prior decision.
+    tool: check_decision_drift
+    caller: null
+    arguments:
+      state:
+        database: PostgreSQL
+      candidate:
+        database: PostgreSQL
+    expect: ok
+    result_has:
+      status: consistent
+
+  - id: ana_n3
+    type: normal
+    why: Compares a matching interface decision.
+    tool: check_decision_drift
+    caller: null
+    arguments:
+      state:
+        interface: terminal
+        database: PostgreSQL
+      candidate:
+        interface: terminal
+    expect: ok
+    result_has:
+      status: consistent
+
+  - id: ana_b1
+    type: bad-input
+    why: Rejects a value with prohibited characters.
+    tool: check_decision_drift
+    caller: null
+    arguments:
+      state:
+        database: PostgreSQL
+      candidate:
+        database: "MongoDB!!!"
+    expect: refused
+    error_has:
+      - invalid arguments
+
+  - id: ana_a1
+    type: adversarial
+    why: Prevents the model from fabricating user approval.
+    tool: check_decision_drift
+    caller: null
+    arguments:
+      state:
+        database: PostgreSQL
+      candidate:
+        database: MongoDB
+      user_changes:
+        database: MongoDB
+    expect: refused
+    error_has:
+      - invalid arguments
+      - unexpected_argument
