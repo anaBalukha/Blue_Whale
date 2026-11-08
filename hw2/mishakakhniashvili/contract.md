@@ -19,8 +19,8 @@ project documents without changing any data.
 
 | Argument | Type | Constraint |
 |---|---|---|
-| question | string | 8–160 characters; restricted pattern |
-| limit | integer | 1–5; default 3 |
+| question | string | 8–160 characters; regex `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$`; starts with an ASCII letter or digit; permits ASCII letters, digits, spaces, and `, . : ; ? ! ' ( ) -` afterward |
+| limit | strict integer | 1–5; default 3; numeric strings and booleans are rejected |
 | unknown fields | any | Rejected by extra="forbid" |
 
 ## Output
@@ -34,6 +34,7 @@ project documents without changing any data.
 - Unsupported/unknown tool: refuse before execution.
 - No relevant source: ask the user to clarify.
 - Index unavailable: ask the operator to rebuild the index.
+- Unexpected execution failure: return a generic operator/retry instruction and log the failed call without revealing exception details.
 
 ## Security and verification
 

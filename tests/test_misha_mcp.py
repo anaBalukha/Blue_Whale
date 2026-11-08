@@ -80,3 +80,65 @@ def test_mcp_and_function_calling_expose_same_arguments():
     assert set(mcp_schema["required"]) == set(
         function_schema["required"]
     )
+
+
+def test_mcp_and_function_calling_match_constraints():
+    """Verify matching advertised field validation constraints."""
+    listed = asyncio.run(inspect_server())
+
+    mcp_tool = next(
+        tool for tool in listed
+        if tool.name == "search_trusted_sources"
+    )
+
+    mcp_schema = mcp_tool.input_schema
+    function_schema = TOOLS[
+        "search_trusted_sources"
+    ].schema()["function"]["parameters"]
+
+    assert set(mcp_schema["properties"]) == set(
+        function_schema["properties"]
+    )
+
+    assert set(mcp_schema["required"]) == set(
+        function_schema["required"]
+    )
+
+    keys = (
+        "type",
+        "pattern",
+        "minLength",
+        "maxLength",
+        "minimum",
+        "maximum",
+        "default",
+    )
+
+    for field in ("question", "limit"):
+        mcp_field = mcp_schema["properties"][field]
+        function_field = function_schema["properties"][field]
+
+        for key in keys:
+            assert mcp_field.get(key) == function_field.get(key), (
+                f"Schema mismatch: {field}.{key}"
+            )
+
+    assert function_schema["additionalProperties"] is False
+
+
+def test_mcp_rejects_out_of_range_limit():
+    """Verify that the MCP runtime enforces numeric bounds."""
+    async def run():
+        async with Client(mcp) as client:
+            return await client.call_tool(
+                "search_trusted_sources",
+                {
+                    "question": (
+                        "Which interface is planned for Blue Whale MVP?"
+                    ),
+                    "limit": 100,
+                },
+            )
+
+    result = asyncio.run(run())
+    assert result.is_error

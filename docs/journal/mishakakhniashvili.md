@@ -49,9 +49,23 @@ One thing I would do differently is test invalid and adversarial arguments earli
 
 *Retrospective entry, written November 8, 2026.*
 
-I considered how Session State applies to Blue Whale. The product needs to remember confirmed user decisions across conversation turns so that it can detect contradictions and recover the correct context. I reviewed the importance of keeping user-confirmed decisions separate from AI-generated assumptions.
+I examined how Session State applies to Blue Whale and ran a
+two-call offline experiment using an injected test model.
 
-We have not yet implemented persistent session memory. One thing I would do differently is define the memory scope, expiration rules, and deletion mechanism before implementing the storage layer.
+The first call established PostgreSQL as a project decision.
+The second call asked which database was previously selected.
+Inspecting the messages passed to the test model showed that
+each call started with only a system message and the current
+user message. The earlier decision was not carried forward.
+
+This demonstrated a concrete limitation in the current
+`src/act.py` implementation: it does not preserve conversation
+history across separate calls. Persistent session memory,
+expiration, and deletion have not yet been implemented.
+
+One thing I would do differently is define the memory scope,
+retention period, explicit write conditions, and deletion
+mechanism before implementing session storage.
 
 ## Week 7 — Supervised Autonomy Loop
 
