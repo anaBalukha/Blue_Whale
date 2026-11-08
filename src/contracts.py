@@ -21,7 +21,7 @@ Limit = Annotated[
 class SearchArguments(BaseModel):
     """Search trusted project sources without changing them."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     question: Question
     limit: Limit = 3
