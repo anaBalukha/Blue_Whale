@@ -51,3 +51,33 @@ must not be represented as a complete live RAG evaluation.
 - Run the complete golden set with real model calls.
 - Record actual embeddings and full RAG request usage.
 - Keep the failing baseline as evidence rather than removing it.
+
+
+## Entry 2 — HW2 Tool Contract and MCP — 8 November 2026
+
+**Owner:** Mikheili Kakhniashvili, Eval Keeper.
+
+**Delegated to:** ChatGPT (GPT-6), Autonomy Ladder rung 3.
+
+**Task:** Implement trusted-source retrieval, strict tool contracts,
+MCP integration, supervised tool calling, and offline golden tests.
+
+**What went wrong:** The original MCP implementation accepted
+unexpected fields. One golden case also confused retrieval with
+answer generation.
+
+**Verification:** I ran tests, investigated both failures, and
+corrected the implementation. The final version passed 40 tests.
+
+**Red CI experiment:** I deliberately changed extra="forbid" to
+extra="ignore". Four tests failed. GitHub Actions detected the
+regression and branch protection blocked merging.
+
+**Human review:** Ana approved and merged product PR #20.
+Write-up PR #22 was separately reviewed and merged.
+The deliberately failing PR #21 was closed without merging.
+
+**Limitation:** No live model call was tested because an
+OpenRouter API key was unavailable.
+
+**Next time:** Test the MCP validation boundary earlier.

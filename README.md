@@ -11,11 +11,14 @@ suggestions contradict previously confirmed decisions.
 - Five offline golden cases: 4/5 passed.
 - Ten real OpenRouter chat calls recorded separately.
 
+- Lab 3 multimodal extraction and confidence routing.
+- HW2 trusted-source retrieval with MCP and tool validation.
+
 ## Not yet complete
 
 - Automatic trusted-state recovery.
 - Live end-to-end RAG golden evaluation.
-- Lab 3 multimodal feature (PR #13).
+
 
 ## Requirements
 

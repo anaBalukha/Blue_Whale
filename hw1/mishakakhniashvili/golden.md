@@ -62,4 +62,4 @@ Command:
 
     python -m pytest hw1/mishakakhniashvili -v
 
-Actual result: 6 passed in 0.23s.
+Updated verification (2026-11-08): 7 passed.
