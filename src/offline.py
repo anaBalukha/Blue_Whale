@@ -62,14 +62,48 @@ def stems(text: str) -> set[str]:
 def complete_json(prompt: str) -> tuple[dict, SimpleNamespace]:
     head, question = prompt.split("QUESTION:", 1)
     q = stems(question)
-    cited, parts = [], []
+    # Require strong evidence before answering, but allow moderately
+    # relevant supporting documents when a question spans decisions.
+    candidates = []
     for n, header, body in _SOURCE.findall(head):
         overlap = len(q & stems(header + " " + body)) / max(1, len(q))
-        if overlap >= 0.6 and len(cited) < 2:
+        candidates.append((int(n), header, body, overlap))
+
+    strongest = max((c[3] for c in candidates), default=0.0)
+    cited, parts = [], []
+    seen_documents = set()
+
+    if strongest >= 0.60:
+        for n, header, body, overlap in candidates:
+            document_title = header.split(" · ", 1)[0].strip()
+
+            if overlap < 0.45 or document_title in seen_documents:
+                continue
+
             sentences = re.split(r"(?<=[.!?])\s+", body.strip())
-            ranked = sorted(sentences, key=lambda s: -len(q & stems(s)))[:2]
-            cited.append(int(n))
-            parts += [f"{s.rstrip('.')} [{n}]." for s in sentences if s in ranked]
+            ranked = sorted(
+                sentences,
+                key=lambda sentence: -len(q & stems(sentence)),
+            )[:2]
+
+            selected = [
+                sentence for sentence in sentences
+                if sentence in ranked and sentence.strip()
+            ]
+            if not selected:
+                continue
+
+            cited.append(n)
+            seen_documents.add(document_title)
+
+            parts.extend(
+                f"{sentence.rstrip('.')} [{n}]."
+                for sentence in selected
+            )
+
+            if len(cited) == 3:
+                break
+
     out = ({"answer": " ".join(parts), "citations": cited, "grounded": True} if cited else
            {"answer": "The sources do not say.", "citations": [], "grounded": False})
     resp = SimpleNamespace(model=MODEL, usage=SimpleNamespace(
