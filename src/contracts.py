@@ -50,7 +50,7 @@ DecisionValue = Annotated[
     Field(
         min_length=1,
         max_length=80,
-        pattern=r"^[A-Za-z0-9][A-Za-z0-9 _.,:/()+-]*$",
+        pattern=r"^.*$",
         description="Single project decision value.",
     ),
 ]
