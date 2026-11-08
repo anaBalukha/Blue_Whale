@@ -1,5 +1,12 @@
 # HW1 - Golden Test Evaluation Reporter
 
+## Run and test
+
+From the repository root:
+
+```bash
+python hw1/mishakakhniashvili/src/evaluate.py '{"cases":[{"id":"g1","expected":"answered","actual":"answered"}]}'
+python -m pytest -q hw1/mishakakhniashvili
 ## Goal
 Build a Python CLI tool that evaluates expected versus actual test
 outcomes, calculates a pass rate, and identifies failed test cases.
@@ -33,9 +40,3 @@ generate AI responses or decide whether an answer is correct.
 
 ## Out of scope
 Live model calls, retrieval, citation scoring, and dashboards.
-
-## Run
-python hw1/mishakakhniashvili/src/evaluate.py '<JSON input>'
-
-## Test
-python -m pytest hw1/mishakakhniashvili

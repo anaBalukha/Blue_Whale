@@ -10,6 +10,7 @@ checkpoints. I delegated specification drafting and ambiguity review
 to ChatGPT, then checked the suggestions against our MVP requirements.
 I rejected building a web interface immediately because a terminal
 application lets us test drift detection and recovery first.
+Next time, I would explicitly list which confirmed decisions must stay in the context before drafting the first specification.
 
 ## Week 2 - Spec Before Code
 
