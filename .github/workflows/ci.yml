@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BLUE_WHALE_OFFLINE: "1"
+      BLUE_WHALE_MIN_SCORE: "0.30"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -12,3 +13,5 @@ jobs:
           python-version: "3.11"
       - run: pip install -r requirements.txt
       - run: pytest -q tests
+      - run: python -m src.index
+      - run: python -m evals.run_golden --k 5
