@@ -100,16 +100,17 @@ Owner: Aleksandre Giorgashvili (@lexokodavs)
 
 ### Inputs
 
-- `previous_version`: 0 or positive integer representing the current trusted checkpoint version.
-- `previous_decisions`: Dictionary of decision key-value pairs (string keys and string values).
-- `proposed_changes`: Dictionary of decision key-value pairs (string keys and string values).
+- `previous_version`: strict integer, 0 to 1000000 inclusive (booleans, strings and floats are refused); the current trusted checkpoint version.
+- `previous_decisions`: 1 to 8 decision key-value pairs (shared `DecisionMap` from `src/contracts.py`).
+- `proposed_changes`: 1 to 8 decision key-value pairs (shared `DecisionMap`). An empty change map is refused.
+- Keys must match `^[a-z][a-z0-9_]*$` (1-32 characters); values must match `^[A-Za-z0-9][A-Za-z0-9 _.,:/()+-]*$` (1-80 characters).
 
 - Keys: lowercase ASCII letters, numbers and underscores;
   - start with a letter; maximum 32 characters.
 - Values: 1–80 characters, starting with an ASCII letter or digit;
   - remaining characters limited to letters, digits, spaces, underscores and selected ordinary punctuation.
 - Extra arguments are forbidden.
-- No identity or user_changes argument is accepted.
+- No identity, approval (`authorized`, `user_approved`) or `user_changes` argument is accepted.
 
 The model sees all input fields. The tool compares the proposed changes against the previous state and calculates a proposed checkpoint without modifying trusted state.
 
@@ -119,14 +120,16 @@ The model sees all input fields. The tool compares the proposed changes against 
   - `version`: Proposed version number (previous_version + 1 if changes exist, else previous_version)
   - `decisions`: Merged decisions dictionary (previous decisions with proposed changes applied)
 - `changed_fields`: Sorted list of decision keys that would change
-- `requires_confirmation`: Boolean indicating whether human approval is required before applying the proposed changes
+- `requires_confirmation`: `true` exactly when `changed_fields` is non-empty. It is informational: the preview is never written to trusted state, and only a separate, human-confirmed capability could commit it.
 
 ### Expected failures
 
 | Failure | Model-facing behavior |
 |---|---|
 | Missing or malformed input | Explain which required field is missing or invalid |
-| Invalid version (non-integer, negative) | Refuse with validation error |
+| Invalid version (non-integer, negative, above 1000000) | Refuse with validation error naming `previous_version` |
+| Merged checkpoint would exceed 8 decisions | "Proposed checkpoint would exceed 8 decisions. Propose fewer new decision fields or change existing ones." |
+| Effective change at version 1000000 | "Checkpoint version limit reached. Ask the operator to archive this checkpoint before changing it." |
 | Invalid decision key (wrong pattern) | Refuse with validation error |
 | Invalid decision value (wrong pattern) | Refuse with validation error |
 | Extra arguments | Refuse with validation error |

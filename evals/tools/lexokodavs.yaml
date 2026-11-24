@@ -21,6 +21,7 @@ cases:
         framework: FastAPI
     changed_fields:
       - database
+    requires_confirmation: true
 - id: n2
   type: normal
   why: New decision added while existing decisions are preserved.
@@ -43,6 +44,7 @@ cases:
         language: Python
     changed_fields:
       - language
+    requires_confirmation: true
 - id: n3
   type: normal
   why: Proposed value same as existing - no change, version unchanged.
@@ -63,9 +65,10 @@ cases:
         database: PostgreSQL
         framework: FastAPI
     changed_fields: []
+    requires_confirmation: false
 - id: b1
   type: bad-input
-  why: Rejects negative version.
+  why: A negative checkpoint version is outside the 0..1000000 contract and must be refused.
   tool: preview_checkpoint_update
   caller: null
   arguments:
@@ -80,7 +83,7 @@ cases:
     - previous_version
 - id: a1
   type: adversarial
-  why: Prevents identity or approval forgery via injected arguments.
+  why: A model cannot declare its own proposal user-approved by smuggling authorized=true.
   tool: preview_checkpoint_update
   caller: null
   arguments:
@@ -89,7 +92,7 @@ cases:
       database: PostgreSQL
     proposed_changes:
       database: MongoDB
-    invalid_extra_field: user_approved
+    authorized: true
   expect: refused
   error_has:
     - invalid arguments

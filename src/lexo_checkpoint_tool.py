@@ -1,26 +1,56 @@
-"""Preview checkpoint update tool for HW2 (read-only)."""
+"""Read-only checkpoint preview tool (Leqso HW2).
+
+The tool calculates what a checkpoint *would* look like if the proposed
+changes were applied. It never writes trusted state and never treats a
+proposal as user approval; ``requires_confirmation`` tells the caller that
+a human must confirm before any separate commit capability may apply it.
+"""
+
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from .contracts import DecisionMap
+from .misha_retrieval_tool import ToolFailure
+
+MAX_VERSION = 1_000_000
+MAX_DECISIONS = 8
+
+CheckpointVersion = Annotated[
+    int,
+    Field(
+        ge=0,
+        le=MAX_VERSION,
+        strict=True,
+        description=(
+            "Current trusted checkpoint version "
+            f"(integer from 0 to {MAX_VERSION})."
+        ),
+    ),
+]
 
 
 class PreviewCheckpointUpdateArgs(BaseModel):
+    """Preview a checkpoint update; never modify trusted state."""
+
     model_config = ConfigDict(extra="forbid")
 
-    previous_version: int = Field(
-        ge=0,
-        strict=True,
-        description="Current trusted checkpoint version (non-negative integer).",
-    )
+    previous_version: CheckpointVersion
     previous_decisions: DecisionMap
     proposed_changes: DecisionMap
+
+
+class Checkpoint(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    version: int
+    decisions: dict[str, str]
 
 
 class PreviewResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    checkpoint: dict
+    checkpoint: Checkpoint
     changed_fields: list[str]
     requires_confirmation: bool
 
@@ -30,26 +60,32 @@ def run_preview_checkpoint_update(
 ) -> PreviewResult:
     """Calculate a proposed checkpoint without modifying trusted state."""
 
-    previous_decisions = dict(args.previous_decisions)
-    proposed_changes = dict(args.proposed_changes)
+    decisions = dict(args.previous_decisions)
+    changed_fields = sorted(
+        key
+        for key, value in args.proposed_changes.items()
+        if decisions.get(key) != value
+    )
+    decisions.update(args.proposed_changes)
 
-    new_decisions = dict(previous_decisions)
-    changed_fields = []
+    if len(decisions) > MAX_DECISIONS:
+        raise ToolFailure(
+            f"Proposed checkpoint would exceed {MAX_DECISIONS} decisions. "
+            "Propose fewer new decision fields or change existing ones."
+        )
 
-    for k, v in proposed_changes.items():
-        if k not in new_decisions or new_decisions[k] != v:
-            new_decisions[k] = v
-            changed_fields.append(k)
+    if changed_fields and args.previous_version >= MAX_VERSION:
+        raise ToolFailure(
+            "Checkpoint version limit reached. "
+            "Ask the operator to archive this checkpoint before changing it."
+        )
 
-    changed_fields = sorted(list(set(changed_fields)))
-
-    new_version = args.previous_version + 1 if changed_fields else args.previous_version
+    version = (
+        args.previous_version + 1 if changed_fields else args.previous_version
+    )
 
     return PreviewResult(
-        checkpoint={
-            "version": new_version,
-            "decisions": new_decisions,
-        },
+        checkpoint=Checkpoint(version=version, decisions=decisions),
         changed_fields=changed_fields,
         requires_confirmation=bool(changed_fields),
     )

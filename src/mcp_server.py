@@ -10,7 +10,7 @@ from .act import call_tool
 from .contracts import Question, Limit, DecisionMap
 from .tools import SearchResult, tools_for
 from .ana_drift_tool import DriftResult
-from .lexo_checkpoint_tool import PreviewResult, run_preview_checkpoint_update
+from .lexo_checkpoint_tool import CheckpointVersion, PreviewResult
 
 
 mcp = MCPServer(
@@ -104,7 +104,7 @@ def check_decision_drift(
     ),
 )
 def preview_checkpoint_update(
-    previous_version: int,
+    previous_version: CheckpointVersion,
     previous_decisions: DecisionMap,
     proposed_changes: DecisionMap,
     ctx: Context,
