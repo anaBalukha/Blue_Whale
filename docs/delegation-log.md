@@ -178,3 +178,56 @@ authorization correctness, recovery success or consistency.
 
 **Next time:** Verify the Python environment before starting
 a multi-stage implementation.
+
+## Entry 4 — Leqso HW2 `preview_checkpoint_update` — 24 November 2026
+
+**Owner:** Aleksandre Giorgashvili (@lexokodavs), Spec Keeper.
+
+**Delegated to:** Autonomy Ladder rung 3. Which assistant, if any, drafted the first version of PR #35 (commit `84a434e`, whose message records "5 failures -> 85 passed" while fixing tests) was not recorded. The hardening pass (commit `6fc047e`) was done with Claude Code (Claude Opus 5.5).
+
+**Task:** Wrap the HW1 checkpoint merge as a read-only tool that previews the next versioned checkpoint, registered for function calling and MCP, with five golden cases.
+
+**Plan check:** The hardening plan was written up and approved by me before any implementation file was edited.
+
+**What went wrong:**
+- `previous_version` had no upper bound: `10**30` was accepted.
+- 8 + 8 decisions produced a 16-decision checkpoint that the tool itself refuses as input.
+- The MCP function declared `previous_version: int`, so the MCP door advertised no bounds.
+- The first test that compared the two doors compared a schema with itself.
+- The adversarial golden used a meaningless `invalid_extra_field`.
+
+**Caught by:** Calling `call_tool()` with out-of-range inputs by hand. A new test comparing the bounds and patterns the two doors actually advertise failed on the MCP schema.
+
+**Correction:** Version bounded to 0..1000000; oversized merges and version overflow refused with model-actionable messages; MCP signature reuses the `CheckpointVersion` type; golden a1 injects `authorized: true`.
+
+**Evidence Rule:**
+- **Test:** `tests/test_lexo_checkpoint_tool.py::test_forged_identity_or_approval_never_runs` and golden `lexokodavs` a1 fail if `extra="forbid"` is removed.
+- **Log entry:** every call writes one line to `logs/tools.jsonl` (`tool`, `ok`, `error`, `caller_type`, `latency_ms`; no decision values).
+
+**Red CI experiment:** `extra="forbid"` → `extra="ignore"` on a throwaway branch, PR #37. Seven tests failed in run 45453240515. The required `test` check blocked the merge. PR closed unmerged and branch deleted.
+
+**Human review:** Product PR #35 approved by @mishakakhniashvili and merged. Write-up PR #36 merged.
+
+**Verification:** 110 tests passed locally and in CI on `main`.
+
+**Limitations:** Offline only; no live-model tool call. The tool previews; nothing commits a confirmed checkpoint yet.
+
+**Time spent:** Not measured reliably.
+
+## Entry 5 — Leqso HW1 post-grading corrections — 24 November 2026
+
+**Owner:** Aleksandre Giorgashvili (@lexokodavs).
+
+**Delegated to:** Claude Code (Claude Opus 5.5), Autonomy Ladder rung 3, after I approved the plan. The original October build agent is unknown and is recorded as such in `hw1/lexokodavs/delegation.md`.
+
+**What went wrong:**
+- Merge-conflict markers had been left in `hw1/lexokodavs/spec.md` by merge `f6f4cdf`.
+- The spec described a nested `user_changes` shape that the code refuses.
+- The builder silently ignored unknown fields such as `"authorized": true`.
+- The tests only passed from the repository root.
+
+**Caught by:** Reading the file on `main`; running the nested and `authorized` payloads; running pytest from another folder (4 failed).
+
+**Correction and verification:** PR #38. The builder now refuses unknown fields. Against the old code the two new tests fail; with the fix all 14 HW1 tests pass, from any folder.
+
+**Limitation:** HW1 tests are not part of CI (`pytest -q tests`); they are run explicitly.
