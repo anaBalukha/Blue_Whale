@@ -1,0 +1,676 @@
+{
+  "ts": "2026-11-24T14:46:01.479444+00:00",
+  "name": "Blue Whale structured drift benchmark v1",
+  "scope": "Synthetic, structured decision comparisons. User changes are supplied as trusted application input. Does not evaluate natural-language extraction, authorization, recovery or post-recovery consistency.",
+  "threshold": 0.85,
+  "total": 50,
+  "correct_classifications": 50,
+  "accuracy": 1.0,
+  "passed": 50,
+  "exact_case_pass_rate": 1.0,
+  "meets_accuracy_target": true,
+  "confusion_matrix": {
+    "true_positive": 20,
+    "true_negative": 30,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "categories": {
+    "unauthorized_drift": {
+      "passed": 10,
+      "total": 10
+    },
+    "consistent": {
+      "passed": 10,
+      "total": 10
+    },
+    "explicit_override": {
+      "passed": 10,
+      "total": 10
+    },
+    "mixed_override_and_drift": {
+      "passed": 10,
+      "total": 10
+    },
+    "partial_or_new_decision": {
+      "passed": 10,
+      "total": 10
+    }
+  },
+  "items": [
+    {
+      "id": "d001",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "database"
+      ],
+      "actual_conflict_fields": [
+        "database"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d002",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "interface"
+      ],
+      "actual_conflict_fields": [
+        "interface"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d003",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "language"
+      ],
+      "actual_conflict_fields": [
+        "language"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d004",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ],
+      "actual_conflict_fields": [
+        "framework"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d005",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "storage"
+      ],
+      "actual_conflict_fields": [
+        "storage"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d006",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "authentication"
+      ],
+      "actual_conflict_fields": [
+        "authentication"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d007",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "testing"
+      ],
+      "actual_conflict_fields": [
+        "testing"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d008",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "deployment"
+      ],
+      "actual_conflict_fields": [
+        "deployment"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d009",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "database",
+        "interface"
+      ],
+      "actual_conflict_fields": [
+        "database",
+        "interface"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d010",
+      "category": "unauthorized_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ],
+      "actual_conflict_fields": [
+        "framework"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d011",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d012",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d013",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d014",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d015",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d016",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d017",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d018",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d019",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d020",
+      "category": "consistent",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d021",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d022",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d023",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d024",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d025",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d026",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d027",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d028",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d029",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d030",
+      "category": "explicit_override",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d031",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "interface"
+      ],
+      "actual_conflict_fields": [
+        "interface"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d032",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "database"
+      ],
+      "actual_conflict_fields": [
+        "database"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d033",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ],
+      "actual_conflict_fields": [
+        "framework"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d034",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "deployment"
+      ],
+      "actual_conflict_fields": [
+        "deployment"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d035",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "testing"
+      ],
+      "actual_conflict_fields": [
+        "testing"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d036",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "database"
+      ],
+      "actual_conflict_fields": [
+        "database"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d037",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ],
+      "actual_conflict_fields": [
+        "framework"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d038",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "language"
+      ],
+      "actual_conflict_fields": [
+        "language"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d039",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "storage"
+      ],
+      "actual_conflict_fields": [
+        "storage"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d040",
+      "category": "mixed_override_and_drift",
+      "expected": "drift",
+      "actual": "drift",
+      "expected_conflict_fields": [
+        "database",
+        "language"
+      ],
+      "actual_conflict_fields": [
+        "database",
+        "language"
+      ],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d041",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d042",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d043",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d044",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d045",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d046",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d047",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d048",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d049",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    },
+    {
+      "id": "d050",
+      "category": "partial_or_new_decision",
+      "expected": "consistent",
+      "actual": "consistent",
+      "expected_conflict_fields": [],
+      "actual_conflict_fields": [],
+      "classification_correct": true,
+      "exact_conflicts": true,
+      "pass": true
+    }
+  ]
+}

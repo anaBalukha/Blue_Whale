@@ -127,3 +127,54 @@ running automated edits, and verify the active Python
 environment before testing.
 
 **Time spent:** Not measured reliably.
+
+
+## Structured drift benchmark — Issue #31
+
+**Date:** 2026-11-24
+
+**Owner:** Mikheili Kakhniashvili, Eval Keeper.
+
+**Delegated to:** ChatGPT, Autonomy Ladder rung 3.
+
+**Task:** Create a reproducible structured drift benchmark,
+evaluation runner, regression tests and updated evaluation
+documentation.
+
+**Context:** Blue Whale's specification, existing drift checker,
+Design Review accuracy target and GitHub issue #31.
+
+**Plan:** Use 50 synthetic cases across five categories.
+Specify expected labels separately from the function under test.
+Measure classification accuracy and exact conflict fields.
+
+**What went wrong:** The initial execution used system Python
+instead of the project's virtual environment. The benchmark
+ran successfully, but pytest and Pydantic were unavailable.
+The documentation corrections therefore did not execute.
+
+**Correction:** Activate the existing virtual environment and
+repeat verification and documentation updates.
+
+**Measured result:**
+
+- Cases: 50.
+- Correct classifications: 50.
+- Accuracy: 100.0%.
+- Exact case pass rate: 100.0%.
+- Accuracy target: 85.0%.
+- False positives: 0.
+- False negatives: 0.
+
+**Evidence:** evals/results/drift-structured-baseline.json
+
+**Limitations:** The cases are synthetic, with expected labels
+specified separately from the checker. They are not an
+independent sample of real conversations. The benchmark
+does not establish natural-language extraction accuracy,
+authorization correctness, recovery success or consistency.
+
+**Human review:** Teammate review and merge are pending.
+
+**Next time:** Verify the Python environment before starting
+a multi-stage implementation.

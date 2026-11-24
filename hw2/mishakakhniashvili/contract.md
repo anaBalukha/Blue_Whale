@@ -19,7 +19,7 @@ project documents without changing any data.
 
 | Argument | Type | Constraint | Description the model reads |
 |---|---|---|---|
-| question | string | 8–160 characters; regex `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\\-]*$` | Question about trusted Blue Whale project documents. |
+| question | string | 8–160 characters; regex `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$` | Question about trusted Blue Whale project documents. |
 | limit | strict integer | 1–5; default 3; no booleans or numeric strings | Maximum number of trusted sources to retrieve (1 to 5). |
 | unknown fields | any | Rejected by `extra="forbid"` | Not accepted |
 

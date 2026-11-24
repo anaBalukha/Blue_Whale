@@ -1,0 +1,773 @@
+{
+  "name": "Blue Whale structured drift benchmark v1",
+  "threshold": 0.85,
+  "scope": "Synthetic, structured decision comparisons. User changes are supplied as trusted application input. Does not evaluate natural-language extraction, authorization, recovery or post-recovery consistency.",
+  "items": [
+    {
+      "id": "d001",
+      "category": "unauthorized_drift",
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "MongoDB"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "database"
+      ]
+    },
+    {
+      "id": "d002",
+      "category": "unauthorized_drift",
+      "state": {
+        "interface": "terminal"
+      },
+      "candidate": {
+        "interface": "web"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "interface"
+      ]
+    },
+    {
+      "id": "d003",
+      "category": "unauthorized_drift",
+      "state": {
+        "language": "Python"
+      },
+      "candidate": {
+        "language": "Java"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "language"
+      ]
+    },
+    {
+      "id": "d004",
+      "category": "unauthorized_drift",
+      "state": {
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "framework": "Django"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ]
+    },
+    {
+      "id": "d005",
+      "category": "unauthorized_drift",
+      "state": {
+        "storage": "SQLite"
+      },
+      "candidate": {
+        "storage": "Redis"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "storage"
+      ]
+    },
+    {
+      "id": "d006",
+      "category": "unauthorized_drift",
+      "state": {
+        "authentication": "local"
+      },
+      "candidate": {
+        "authentication": "OAuth"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "authentication"
+      ]
+    },
+    {
+      "id": "d007",
+      "category": "unauthorized_drift",
+      "state": {
+        "testing": "pytest"
+      },
+      "candidate": {
+        "testing": "unittest"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "testing"
+      ]
+    },
+    {
+      "id": "d008",
+      "category": "unauthorized_drift",
+      "state": {
+        "deployment": "local"
+      },
+      "candidate": {
+        "deployment": "AWS"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "deployment"
+      ]
+    },
+    {
+      "id": "d009",
+      "category": "unauthorized_drift",
+      "state": {
+        "database": "PostgreSQL",
+        "interface": "terminal"
+      },
+      "candidate": {
+        "database": "MongoDB",
+        "interface": "web"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "database",
+        "interface"
+      ]
+    },
+    {
+      "id": "d010",
+      "category": "unauthorized_drift",
+      "state": {
+        "language": "Python",
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "language": "Python",
+        "framework": "Flask"
+      },
+      "user_changes": {},
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ]
+    },
+    {
+      "id": "d011",
+      "category": "consistent",
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "PostgreSQL"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d012",
+      "category": "consistent",
+      "state": {
+        "interface": "terminal"
+      },
+      "candidate": {
+        "interface": "terminal"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d013",
+      "category": "consistent",
+      "state": {
+        "language": "Python"
+      },
+      "candidate": {
+        "language": "Python"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d014",
+      "category": "consistent",
+      "state": {
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "framework": "FastAPI"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d015",
+      "category": "consistent",
+      "state": {
+        "storage": "SQLite"
+      },
+      "candidate": {
+        "storage": "SQLite"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d016",
+      "category": "consistent",
+      "state": {
+        "testing": "pytest"
+      },
+      "candidate": {
+        "testing": "pytest"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d017",
+      "category": "consistent",
+      "state": {
+        "deployment": "local"
+      },
+      "candidate": {
+        "deployment": "local"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d018",
+      "category": "consistent",
+      "state": {
+        "database": "PostgreSQL",
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "database": "PostgreSQL",
+        "framework": "FastAPI"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d019",
+      "category": "consistent",
+      "state": {
+        "interface": "terminal",
+        "language": "Python"
+      },
+      "candidate": {
+        "interface": "terminal",
+        "language": "Python"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d020",
+      "category": "consistent",
+      "state": {
+        "language": "Java",
+        "database": "MySQL",
+        "testing": "JUnit"
+      },
+      "candidate": {
+        "language": "Java",
+        "database": "MySQL",
+        "testing": "JUnit"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d021",
+      "category": "explicit_override",
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "MongoDB"
+      },
+      "user_changes": {
+        "database": "MongoDB"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d022",
+      "category": "explicit_override",
+      "state": {
+        "interface": "terminal"
+      },
+      "candidate": {
+        "interface": "web"
+      },
+      "user_changes": {
+        "interface": "web"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d023",
+      "category": "explicit_override",
+      "state": {
+        "language": "Python"
+      },
+      "candidate": {
+        "language": "Java"
+      },
+      "user_changes": {
+        "language": "Java"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d024",
+      "category": "explicit_override",
+      "state": {
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "framework": "Django"
+      },
+      "user_changes": {
+        "framework": "Django"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d025",
+      "category": "explicit_override",
+      "state": {
+        "storage": "SQLite"
+      },
+      "candidate": {
+        "storage": "PostgreSQL"
+      },
+      "user_changes": {
+        "storage": "PostgreSQL"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d026",
+      "category": "explicit_override",
+      "state": {
+        "testing": "pytest"
+      },
+      "candidate": {
+        "testing": "unittest"
+      },
+      "user_changes": {
+        "testing": "unittest"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d027",
+      "category": "explicit_override",
+      "state": {
+        "deployment": "local"
+      },
+      "candidate": {
+        "deployment": "Docker"
+      },
+      "user_changes": {
+        "deployment": "Docker"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d028",
+      "category": "explicit_override",
+      "state": {
+        "database": "PostgreSQL",
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "database": "MySQL",
+        "framework": "FastAPI"
+      },
+      "user_changes": {
+        "database": "MySQL"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d029",
+      "category": "explicit_override",
+      "state": {
+        "database": "PostgreSQL",
+        "interface": "terminal"
+      },
+      "candidate": {
+        "database": "MongoDB",
+        "interface": "web"
+      },
+      "user_changes": {
+        "database": "MongoDB",
+        "interface": "web"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d030",
+      "category": "explicit_override",
+      "state": {
+        "language": "Python",
+        "testing": "pytest"
+      },
+      "candidate": {
+        "language": "Java",
+        "testing": "JUnit"
+      },
+      "user_changes": {
+        "language": "Java",
+        "testing": "JUnit"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d031",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "database": "PostgreSQL",
+        "interface": "terminal"
+      },
+      "candidate": {
+        "database": "MongoDB",
+        "interface": "web"
+      },
+      "user_changes": {
+        "database": "MongoDB"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "interface"
+      ]
+    },
+    {
+      "id": "d032",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "PostgreSQL"
+      },
+      "user_changes": {
+        "database": "MongoDB"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "database"
+      ]
+    },
+    {
+      "id": "d033",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "language": "Python",
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "language": "Java",
+        "framework": "Django"
+      },
+      "user_changes": {
+        "language": "Java"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ]
+    },
+    {
+      "id": "d034",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "storage": "SQLite",
+        "deployment": "local"
+      },
+      "candidate": {
+        "storage": "PostgreSQL",
+        "deployment": "AWS"
+      },
+      "user_changes": {
+        "storage": "PostgreSQL"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "deployment"
+      ]
+    },
+    {
+      "id": "d035",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "testing": "pytest",
+        "language": "Python"
+      },
+      "candidate": {
+        "testing": "JUnit",
+        "language": "Java"
+      },
+      "user_changes": {
+        "language": "Java"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "testing"
+      ]
+    },
+    {
+      "id": "d036",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "interface": "terminal",
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "interface": "web",
+        "database": "MySQL"
+      },
+      "user_changes": {
+        "interface": "web"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "database"
+      ]
+    },
+    {
+      "id": "d037",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "framework": "Flask"
+      },
+      "candidate": {
+        "framework": "Django"
+      },
+      "user_changes": {
+        "framework": "FastAPI"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "framework"
+      ]
+    },
+    {
+      "id": "d038",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "database": "MySQL",
+        "language": "Java"
+      },
+      "candidate": {
+        "database": "PostgreSQL",
+        "language": "Python"
+      },
+      "user_changes": {
+        "database": "PostgreSQL"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "language"
+      ]
+    },
+    {
+      "id": "d039",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "storage": "SQLite",
+        "testing": "pytest"
+      },
+      "candidate": {
+        "storage": "Redis",
+        "testing": "unittest"
+      },
+      "user_changes": {
+        "testing": "unittest"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "storage"
+      ]
+    },
+    {
+      "id": "d040",
+      "category": "mixed_override_and_drift",
+      "state": {
+        "database": "MySQL",
+        "interface": "terminal",
+        "language": "Python"
+      },
+      "candidate": {
+        "database": "MongoDB",
+        "interface": "web",
+        "language": "Java"
+      },
+      "user_changes": {
+        "interface": "web"
+      },
+      "expected_status": "drift",
+      "expected_conflict_fields": [
+        "database",
+        "language"
+      ]
+    },
+    {
+      "id": "d041",
+      "category": "partial_or_new_decision",
+      "state": {
+        "database": "PostgreSQL",
+        "framework": "FastAPI"
+      },
+      "candidate": {
+        "database": "PostgreSQL"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d042",
+      "category": "partial_or_new_decision",
+      "state": {
+        "language": "Python"
+      },
+      "candidate": {
+        "testing": "pytest"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d043",
+      "category": "partial_or_new_decision",
+      "state": {
+        "interface": "terminal"
+      },
+      "candidate": {},
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d044",
+      "category": "partial_or_new_decision",
+      "state": {},
+      "candidate": {
+        "database": "PostgreSQL"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d045",
+      "category": "partial_or_new_decision",
+      "state": {},
+      "candidate": {},
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d046",
+      "category": "partial_or_new_decision",
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "PostgreSQL",
+        "framework": "FastAPI"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d047",
+      "category": "partial_or_new_decision",
+      "state": {
+        "language": "Python",
+        "testing": "pytest"
+      },
+      "candidate": {
+        "language": "Python"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d048",
+      "category": "partial_or_new_decision",
+      "state": {
+        "interface": "terminal"
+      },
+      "candidate": {
+        "storage": "SQLite"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d049",
+      "category": "partial_or_new_decision",
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {},
+      "user_changes": {
+        "database": "MongoDB"
+      },
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    },
+    {
+      "id": "d050",
+      "category": "partial_or_new_decision",
+      "state": {
+        "language": "Python"
+      },
+      "candidate": {
+        "language": "Python",
+        "deployment": "local"
+      },
+      "user_changes": {},
+      "expected_status": "consistent",
+      "expected_conflict_fields": []
+    }
+  ]
+}
