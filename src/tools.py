@@ -8,6 +8,7 @@ from .contracts import SearchArguments
 from .contracts import DriftArguments
 from .ana_drift_tool import DriftResult, run_drift
 from .index import IndexMismatch, load
+from .lexo_checkpoint_tool import PreviewCheckpointUpdateArgs, PreviewResult, run_preview_checkpoint_update
 from .misha_retrieval_tool import ToolFailure, search_trusted_sources
 
 
@@ -72,6 +73,15 @@ TOOLS = {
         description=(
             "Compare supplied prior and proposed project decisions "
             "without modifying either."
+        ),
+    ),
+    "preview_checkpoint_update": Tool(
+        name="preview_checkpoint_update",
+        args=PreviewCheckpointUpdateArgs,
+        run=run_preview_checkpoint_update,
+        description=(
+            "Calculate a proposed versioned checkpoint and changed fields "
+            "without modifying trusted state (read-only preview)."
         ),
     ),
 }
