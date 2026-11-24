@@ -3,7 +3,7 @@
 ## The five golden cases
 
 `evals/tools/lexokodavs.yaml`, run by `tests/test_tool_golden.py` through `call_tool()` (no model, no key) in the CI job `test`.
-Actual outputs below were recorded on 2026-11-24 from commit `6fc047e` of the product PR.
+Actual outputs below were recorded on 2026-11-24 from commit `6fc047e` of the product PR, which was merged unchanged as `28b107a`.
 
 | # | Type | Call | Expected | Actual | Pass? |
 |---|---|---|---|---|---|
@@ -30,20 +30,25 @@ Both doors: `tests/test_lexo_mcp.py` drives the real MCP server with `mcp.Client
 
 ## The red run: proof the gate blocks
 
-**PENDING. Done after PR #35 is merged.**
+On 2026-11-24, branch `hw2-lexokodavs-red` (from `main` at `28b107a`) changed one line: `extra="forbid"` → `extra="ignore"` on `PreviewCheckpointUpdateArgs` in `src/lexo_checkpoint_tool.py` (commit `ed6c8e4`).
 
-Plan: on a throwaway branch, change `extra="forbid"` to `extra="ignore"` on `PreviewCheckpointUpdateArgs` and nothing else. Locally that change makes 7 tests fail, including `test_tool_golden_case[lexokodavs-case9]` (a1) and the forged-approval tests in both doors (checked 2026-11-24 and reverted).
+- Red PR: [#37 · TEST ONLY: Leqso HW2 contract regression — DO NOT MERGE](https://github.com/anaBalukha/Blue_Whale/pull/37), closed without merging (`mergedAt: null`).
+- Red run (pull_request): https://github.com/anaBalukha/Blue_Whale/actions/runs/45453240515. The `test` job failed with `7 failed, 103 passed`:
+  - `test_tool_golden.py::test_tool_golden_case[lexokodavs-case9]` (a1): `lexokodavs: unexpected success`
+  - `test_lexo_checkpoint_tool.py::test_forged_identity_or_approval_never_runs[forged0-3]`
+  - `test_lexo_mcp.py::test_mcp_rejects_forged_identity_or_approval[forged0-1]`
+- Merge blocked: `main` branch protection requires the `test` check (`enforcement_level: everyone`). On #37 the failing `test` check was reported `isRequired: true` and the PR's merge state was `BLOCKED`.
+- Branch deleted: `git push origin --delete hw2-lexokodavs-red`; `git ls-remote --heads origin hw2-lexokodavs-red` returns nothing.
+- Afterwards `main` still has `extra="forbid"`, and the full suite on `main` is 110 passed.
 
-- Red PR: _pending_
-- Red run: _pending_
-- Merge button state: _pending_
-- Branch deleted: _pending_
-
-**What it taught me.** _Pending the red run._
+**What it taught me.** With `extra="ignore"`, `authorized: true` was not refused. It was silently dropped, and the tool returned a normal, successful preview. Nothing visibly went wrong, and that is the danger: the model would believe its approval flag had been accepted, and the result gave no sign that anything had been discarded. The golden case caught it only because a1 expects a refusal, not just any successful-looking output. The same red run also showed why the spy in `test_forged_identity_or_approval_never_runs` matters: it proves the tool body ran with the forged argument present, which a result-only check could not show.
 
 ## The green run
 
-Product PR [#35](https://github.com/anaBalukha/Blue_Whale/pull/35): green CI run _pending final link after merge_.
+Product PR [#35](https://github.com/anaBalukha/Blue_Whale/pull/35), approved by @mishakakhniashvili and merged 2026-11-24 as `28b107a`.
+
+- Green run on the PR's final commit `6fc047e`: https://github.com/anaBalukha/Blue_Whale/actions/runs/45448045112
+- Green run on `main` after the merge: https://github.com/anaBalukha/Blue_Whale/actions/runs/45453006374
 
 ## Things I fixed after review of my own first version
 
