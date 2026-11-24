@@ -10,6 +10,7 @@ from .act import call_tool
 from .contracts import Question, Limit, DecisionMap
 from .tools import SearchResult, tools_for
 from .ana_drift_tool import DriftResult
+from .lexo_checkpoint_tool import CheckpointVersion, PreviewResult
 
 
 mcp = MCPServer(
@@ -93,6 +94,47 @@ def check_decision_drift(
         raise ToolError(outcome["error"])
 
     return DriftResult.model_validate(outcome["result"])
+
+
+@mcp.tool(
+    annotations=READ_ONLY,
+    description=(
+        "Calculate a proposed versioned checkpoint and changed fields "
+        "without modifying trusted state (read-only preview)."
+    ),
+)
+def preview_checkpoint_update(
+    previous_version: CheckpointVersion,
+    previous_decisions: DecisionMap,
+    proposed_changes: DecisionMap,
+    ctx: Context,
+) -> PreviewResult:
+    """Use the same strict gate as the function-calling interface."""
+
+    params = ctx.request_context.params or {}
+    raw = params.get("arguments")
+
+    if not isinstance(raw, dict):
+        raw = {
+            "previous_version": previous_version,
+            "previous_decisions": previous_decisions,
+            "proposed_changes": proposed_changes,
+        }
+
+    outcome = call_tool(
+        {
+            "id": str(ctx.request_id),
+            "name": "preview_checkpoint_update",
+            "arguments": json.dumps(raw),
+        },
+        tools_for(None),
+        None,
+    )
+
+    if not outcome["ok"]:
+        raise ToolError(outcome["error"])
+
+    return PreviewResult.model_validate(outcome["result"])
 
 
 if __name__ == "__main__":
