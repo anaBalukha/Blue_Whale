@@ -33,7 +33,7 @@ CheckpointVersion = Annotated[
 class PreviewCheckpointUpdateArgs(BaseModel):
     """Preview a checkpoint update; never modify trusted state."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     previous_version: CheckpointVersion
     previous_decisions: DecisionMap
