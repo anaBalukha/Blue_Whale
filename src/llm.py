@@ -81,7 +81,7 @@ def cost_usd(model: str, tokens_in: int, tokens_out: int) -> float:
     return round((tokens_in * price_in + tokens_out * price_out) / 1_000_000, 6)
 
 
-def log_usage(resp, latency_ms: int = 0, kind: str = "chat") -> dict:
+def log_usage(resp, latency_ms: int = 0, kind: str = "chat", **extra) -> dict:
     usage = getattr(resp, "usage", None)
     tokens_in = getattr(usage, "prompt_tokens", 0) or 0
     tokens_out = getattr(usage, "completion_tokens", 0) or 0
@@ -95,6 +95,7 @@ def log_usage(resp, latency_ms: int = 0, kind: str = "chat") -> dict:
         "cost_usd": cost_usd(model, tokens_in, tokens_out),
         "latency_ms": latency_ms,
     }
+    line.update(extra)
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     with LOG_PATH.open("a") as f:
         f.write(json.dumps(line) + "\n")
@@ -182,3 +183,220 @@ def complete_tools(messages: list[dict], tool_schemas: list[dict]) -> dict:
         "tool_calls": calls,
         "reasoning_details": extra.get("reasoning_details"),
     }
+
+
+
+class Stream:
+    """One streamed model turn, including fragmented tool calls."""
+
+    def __init__(self, messages, tools=None):
+        self.messages = messages
+        self.tools = tools or []
+        self.text = ""
+        self.tool_calls = []
+        self.reasoning_details = []
+        self.ttft_ms = None
+        self.usage = None
+        self.metrics = {}
+        self.started = False
+        self.finish_reason = None
+        self.model = offline.MODEL if OFFLINE else CHAT_MODEL
+
+    def _chunks(self):
+        from types import SimpleNamespace
+
+        if OFFLINE:
+            for text in (
+                "Offline simulation only. ",
+                "No real model was called.",
+            ):
+                yield SimpleNamespace(
+                    content=text,
+                    tool_calls=[],
+                ), None, {}
+
+            self.finish_reason = "stop"
+            return
+
+        kwargs = {
+            "model": CHAT_MODEL,
+            "messages": self.messages,
+            "stream": True,
+            "stream_options": {"include_usage": True},
+            "temperature": 0,
+        }
+
+        if self.tools:
+            kwargs["tools"] = self.tools
+            kwargs["tool_choice"] = "auto"
+
+        response = client.chat.completions.create(**kwargs)
+
+        try:
+            for chunk in response:
+                self.model = getattr(
+                    chunk, "model", None
+                ) or self.model
+
+                choice = chunk.choices[0] if chunk.choices else None
+
+                if choice is not None:
+                    reason = getattr(choice, "finish_reason", None)
+                    if reason is not None:
+                        self.finish_reason = reason
+
+                delta = choice.delta if choice is not None else None
+
+                extra = (
+                    getattr(delta, "model_extra", None) or {}
+                    if delta is not None else {}
+                )
+
+                yield delta, getattr(chunk, "usage", None), extra
+        finally:
+            response.close()
+
+    def __iter__(self):
+        from types import SimpleNamespace
+
+        if self.started:
+            raise RuntimeError("A model stream can only be consumed once.")
+
+        self.started = True
+        started = time.perf_counter()
+        parts = {}
+        completed = False
+        chunks = self._chunks()
+
+        try:
+            for delta, usage, extra in chunks:
+                if usage is not None:
+                    self.usage = usage
+
+                if delta is None:
+                    continue
+
+                details = extra.get("reasoning_details")
+
+                if details:
+                    if not isinstance(details, list):
+                        raise ValueError(
+                            "Unexpected reasoning metadata format."
+                        )
+                    self.reasoning_details.extend(details)
+
+                for call in getattr(delta, "tool_calls", None) or []:
+                    part = parts.setdefault(call.index, {
+                        "id": "",
+                        "name": "",
+                        "arguments": "",
+                    })
+
+                    if call.id:
+                        part["id"] = call.id
+
+                    if call.function:
+                        if call.function.name:
+                            part["name"] = call.function.name
+
+                        part["arguments"] += (
+                            call.function.arguments or ""
+                        )
+
+                text = getattr(delta, "content", None)
+
+                if text:
+                    if self.ttft_ms is None:
+                        self.ttft_ms = ms_since(started)
+
+                    self.text += text
+                    yield text
+
+            if self.finish_reason not in {"stop", "tool_calls"}:
+                raise RuntimeError(
+                    "The model stream did not finish normally."
+                )
+
+            if parts and self.finish_reason != "tool_calls":
+                raise RuntimeError(
+                    "Unexpected incomplete tool request."
+                )
+
+            if self.finish_reason == "tool_calls" and not parts:
+                raise RuntimeError("Missing streamed tool requests.")
+
+            calls = [parts[i] for i in sorted(parts)]
+
+            if any(not c["id"] or not c["name"] for c in calls):
+                raise RuntimeError("Incomplete streamed tool request.")
+
+            if len({c["id"] for c in calls}) != len(calls):
+                raise RuntimeError("Duplicate tool request identifiers.")
+
+            self.tool_calls = calls
+            completed = True
+
+        finally:
+            chunks.close()
+
+            tokens_in = getattr(
+                self.usage, "prompt_tokens", None
+            )
+
+            tokens_out = getattr(
+                self.usage, "completion_tokens", None
+            )
+
+            usage_available = (
+                tokens_in is not None and tokens_out is not None
+            )
+
+            provider_extra = (
+                getattr(self.usage, "model_extra", None) or {}
+            )
+
+            provider_cost = getattr(
+                self.usage, "cost", None
+            )
+
+            if provider_cost is None:
+                provider_cost = provider_extra.get("cost")
+
+            if OFFLINE:
+                cost = 0.0
+                cost_source = "offline"
+
+            elif provider_cost is not None:
+                cost = float(provider_cost)
+                cost_source = "provider"
+
+            elif usage_available and self.model in PRICES:
+                cost = cost_usd(
+                    self.model, tokens_in, tokens_out
+                )
+                cost_source = "estimate"
+
+            else:
+                cost = None
+                cost_source = "unavailable"
+
+            self.metrics = log_usage(
+                SimpleNamespace(
+                    model=self.model,
+                    usage=self.usage,
+                ),
+                latency_ms=ms_since(started),
+                kind="stream",
+                ttft_ms=self.ttft_ms,
+                completed=completed,
+                mode="offline" if OFFLINE else "live",
+                usage_available=usage_available,
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+                cost_usd=cost,
+                cost_source=cost_source,
+            )
+
+
+def stream(messages, tools=None):
+    return Stream(messages, tools)

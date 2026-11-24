@@ -179,6 +179,42 @@ authorization correctness, recovery success or consistency.
 **Next time:** Verify the Python environment before starting
 a multi-stage implementation.
 
+## Streaming and application interface - Issue #33
+
+Date: 2026-11-24
+
+Owner: Ana Balukhashvili, Repo Keeper.
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Implement the streaming gateway, bounded streamed
+conversation, HTTP endpoints and offline tests.
+
+Context: Lab 5 and Lab 6 requirements and the existing
+Blue Whale tool executor and model gateway.
+
+What went wrong: The initial implementation omitted
+the streaming gateway. Test collection failed because
+stream() could not be imported. The MCP server was
+initially sought in the wrong VS Code workspace.
+
+Correction: Install the missing gateway and open
+the Blue Whale workspace explicitly.
+
+Verification: Six new tests passed. All 74 project
+tests passed. Both external MCP demonstrations succeeded.
+The offline stream produced multiple fragments and
+one usage entry containing TTFT.
+
+Evidence: docs/streaming-evidence.md.
+
+Limitations: Live model execution, persistent memory
+and consequential-action confirmation remain pending.
+
+Next time: Verify module imports and workspace configuration
+before running integration tests.
+
+Teammate review: pending.
 ## Entry 4 — Leqso HW2 `preview_checkpoint_update` — 24 November 2026
 
 **Owner:** Aleksandre Giorgashvili (@lexokodavs), Spec Keeper.
