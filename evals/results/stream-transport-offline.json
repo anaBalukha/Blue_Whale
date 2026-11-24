@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-11-24T18:53:49.742751+00:00",
+  "mode": "offline_provider_simulation",
+  "transport": "real_loopback_http",
+  "passed": true,
+  "first_token_before_completion": true,
+  "event_order": [
+    "token",
+    "token",
+    "done"
+  ],
+  "combined_text": "First token Second token",
+  "usage_log_entries": 1,
+  "usage": {
+    "ts": "2026-11-24T18:53:49+00:00",
+    "kind": "stream",
+    "model": "offline/trigram-hash",
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_usd": 0.0,
+    "latency_ms": 0,
+    "ttft_ms": 0,
+    "completed": true,
+    "mode": "offline",
+    "usage_available": false,
+    "cost_source": "offline"
+  },
+  "summary": {
+    "status": "answered",
+    "error": null,
+    "ttft_ms": 0,
+    "latency_ms": 1,
+    "calls": 0,
+    "rounds": 1,
+    "usage_complete": false,
+    "tokens_in": null,
+    "tokens_out": null,
+    "cost_usd": 0.0,
+    "cost_sources": [
+      "offline"
+    ]
+  }
+}
