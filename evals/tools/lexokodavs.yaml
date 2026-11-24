@@ -1,0 +1,99 @@
+tool_owner: lexokodavs
+cases:
+- id: n1
+  type: normal
+  why: Existing decision changes - version increments, changed field reported.
+  tool: preview_checkpoint_update
+  caller: null
+  arguments:
+    previous_version: 4
+    previous_decisions:
+      database: PostgreSQL
+      framework: FastAPI
+    proposed_changes:
+      database: MongoDB
+  expect: ok
+  result_has:
+    checkpoint:
+      version: 5
+      decisions:
+        database: MongoDB
+        framework: FastAPI
+    changed_fields:
+      - database
+    requires_confirmation: true
+- id: n2
+  type: normal
+  why: New decision added while existing decisions are preserved.
+  tool: preview_checkpoint_update
+  caller: null
+  arguments:
+    previous_version: 2
+    previous_decisions:
+      database: PostgreSQL
+      framework: FastAPI
+    proposed_changes:
+      language: Python
+  expect: ok
+  result_has:
+    checkpoint:
+      version: 3
+      decisions:
+        database: PostgreSQL
+        framework: FastAPI
+        language: Python
+    changed_fields:
+      - language
+    requires_confirmation: true
+- id: n3
+  type: normal
+  why: Proposed value same as existing - no change, version unchanged.
+  tool: preview_checkpoint_update
+  caller: null
+  arguments:
+    previous_version: 3
+    previous_decisions:
+      database: PostgreSQL
+      framework: FastAPI
+    proposed_changes:
+      database: PostgreSQL
+  expect: ok
+  result_has:
+    checkpoint:
+      version: 3
+      decisions:
+        database: PostgreSQL
+        framework: FastAPI
+    changed_fields: []
+    requires_confirmation: false
+- id: b1
+  type: bad-input
+  why: A negative checkpoint version is outside the 0..1000000 contract and must be refused.
+  tool: preview_checkpoint_update
+  caller: null
+  arguments:
+    previous_version: -1
+    previous_decisions:
+      database: PostgreSQL
+    proposed_changes:
+      framework: FastAPI
+  expect: refused
+  error_has:
+    - invalid arguments
+    - previous_version
+- id: a1
+  type: adversarial
+  why: A model cannot declare its own proposal user-approved by smuggling authorized=true.
+  tool: preview_checkpoint_update
+  caller: null
+  arguments:
+    previous_version: 1
+    previous_decisions:
+      database: PostgreSQL
+    proposed_changes:
+      database: MongoDB
+    authorized: true
+  expect: refused
+  error_has:
+    - invalid arguments
+    - unexpected_argument
