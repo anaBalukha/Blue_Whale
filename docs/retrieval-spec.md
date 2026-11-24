@@ -30,9 +30,9 @@ by trusted documents.
 - Embedding model: openai/text-embedding-3-small
 - Reference price: $0.02 per million tokens (2026-10-19).
 - Provider: OpenRouter.
-- Retriever: hybrid vector similarity and BM25; k=3 used in the recorded offline evaluation.
+- Retriever: hybrid vector similarity and BM25. The historical offline baseline used k=3. The current verified offline evaluation uses k=5.
 - Initial experimental threshold: 0.70 (offline baseline 1/5). Runtime default: 0.25; the recorded 4/5 run used BLUE_WHALE_MIN_SCORE=0.30.
-- Current tuning was performed offline; live full-RAG evaluation remains pending.
+- Offline tuning: the historical k=3 run passed 4/5. The corrected multi-document generator passed 5/5 at k=5 with BLUE_WHALE_MIN_SCORE=0.30. See Decision 003 and the committed result files. Live full-RAG evaluation remains pending.
 - Record the embedding model used to build each index.
 
 ## 4. Answering
