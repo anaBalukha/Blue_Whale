@@ -97,3 +97,18 @@ The tool assumes that an application supplies trustworthy
 previous decisions. It does not prove the origin of the
 supplied state, manage session memory, or implement
 automatic state recovery.
+
+## Red experiment branch cleanup
+
+Date: 2026-11-24
+
+The temporary remote branch test-ana-hw2-red-contract
+was successfully deleted.
+
+PR #29 remains closed without merging.
+
+Red CI evidence:
+
+https://github.com/anaBalukha/Blue_Whale/pull/29
+
+https://github.com/anaBalukha/Blue_Whale/actions/runs/42497154342
