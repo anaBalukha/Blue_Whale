@@ -1,4 +1,6 @@
-# Spec v0 · Blue Whale
+# Spec · Blue Whale
+
+*Living specification. Spec Keeper: @lexokodavs. Last updated 2026-11-24 (status, tool layer and Lab 6/7 scope added; requirements and success criteria unchanged).*
 
 ## Problem
 
@@ -101,9 +103,9 @@ Conversation data may contain private or confidential information, so the MVP sh
 - Perfect or permanent long-term memory.
 - Cross-session memory.
 - Voice interaction.
-- Image or video understanding.
-- Multi-agent systems.
-- RAG or a vector database unless later requirements make it necessary.
+- Video understanding. (Image extraction of decisions was added for Lab 3; see `docs/multimodal-spec.md`.)
+- Multi-agent systems. (A single bounded tool loop exists; see "Tool layer".)
+- A hosted vector database. (Lab 4 added a local offline index and retrieval; see `docs/retrieval-spec.md`.)
 - A complex analytics dashboard.
 - Production-scale deployment or thousands of concurrent users.
 
@@ -129,3 +131,44 @@ The core team drift-recovery function (`src/drift_core.py`) accepts `state`, `ca
   2. Explicit user changes override established state and candidate suggestions.
   3. Malformed inputs return structured error handling.
 - **Authority Order:** Latest explicit user change > confirmed checkpoint > older unsuperseded user decision > AI assumptions. AI summaries must never override explicit user changes.
+
+## Tool layer (Lab 5 / HW2)
+
+Model-callable functions go through one gate, `call_tool()` in `src/act.py`, from both doors: function calling (`TOOLS` in `src/tools.py`) and MCP (`src/mcp_server.py`). Full contracts: `docs/tool-contracts.md`.
+
+| Tool | Owner | Effect |
+|---|---|---|
+| `search_trusted_sources` | @mishakakhniashvili | read: retrieves trusted project documents |
+| `check_decision_drift` | @anaBalukha | read: compares supplied prior and proposed decisions |
+| `preview_checkpoint_update` | @lexokodavs | read: calculates a proposed next checkpoint; never writes state |
+
+Tool acceptance criteria (each is enforced by tests in `tests/` and `evals/tools/*.yaml`):
+
+1. Every tool argument contract refuses unknown fields; strings have patterns, numbers have bounds.
+2. No tool accepts user, student or account identity, or an approval flag, as an argument.
+3. Both doors refuse the same invalid and adversarial inputs, and the tool body does not run.
+4. Every call writes one audit line to `logs/tools.jsonl` without raw arguments or decision values.
+
+A tool result is a proposal or evidence. It never becomes a confirmed user decision by itself (authority order above).
+
+## Planned: session state and supervised autonomy (Labs 6 and 7)
+
+**Not implemented yet, and not yet agreed by the team.** The rows below are the Spec Keeper's proposal. They become requirements only when the team agrees the state contract (Lab 6) and agent contract (Lab 7).
+
+- **Trusted checkpoint (proposed):** `version` + `decisions`, scoped to one conversation, held by the application. Only a user-confirmed commit may write it; never a tool result, model output or AI summary. Deleting the session deletes it.
+- **Never stored (proposed):** API keys, raw images, full conversation transcripts, identity supplied by the model.
+- **Action that must wait for a human yes (proposed):** committing a previewed checkpoint into trusted state. The commit must check that the stored version still equals the preview's `previous_version`, so a stale preview cannot overwrite newer decisions.
+
+## Status (2026-11-24)
+
+| Area | Status | Evidence |
+|---|---|---|
+| Structured drift detection | implemented | `src/drift_core.py`, `tests/test_drift_core.py` |
+| Image decision extraction + confidence routing (Lab 3) | implemented | `src/multimodal.py`, `src/confidence.py`, `docs/confidence-policy.md` |
+| Grounded retrieval and answers (Lab 4) | implemented, offline-evaluated | 5/5 offline RAG goldens at k=5 (`evals/results/2026-11-08-0522-offline-k5.json`) |
+| Tool layer + MCP (Lab 5 / HW2) | implemented | three tools above, `tests/test_tool_golden.py` |
+| Session state store (Lab 6) | not implemented | proposal above |
+| Supervised loop with confirmation gate (Lab 7) | not implemented | proposal above |
+| Automatic recovery (acceptance criterion 3) | not implemented | README "Not yet complete" |
+
+**Success criteria are not yet demonstrated.** The structured drift benchmark (`python -m evals.run_drift_benchmark`, 50 synthetic structured cases, 100%) measures the deterministic comparison only. Criterion 1 asks for conversation examples, so natural-language extraction is not covered. Criteria 2 and 3 (recovery, post-recovery consistency) cannot be measured until recovery exists.
