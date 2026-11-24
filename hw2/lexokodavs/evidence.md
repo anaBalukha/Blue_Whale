@@ -41,7 +41,7 @@ On 2026-11-24, branch `hw2-lexokodavs-red` (from `main` at `28b107a`) changed on
 - Branch deleted: `git push origin --delete hw2-lexokodavs-red`; `git ls-remote --heads origin hw2-lexokodavs-red` returns nothing.
 - Afterwards `main` still has `extra="forbid"`, and the full suite on `main` is 110 passed.
 
-**What it taught me.** With `extra="ignore"`, `authorized: true` was not refused. It was silently dropped, and the tool returned a normal, successful preview. Nothing visibly went wrong, and that is the danger: the model would believe its approval flag had been accepted, and the result gave no sign that anything had been discarded. The golden case caught it only because a1 expects a refusal, not just any successful-looking output. The same red run also showed why the spy in `test_forged_identity_or_approval_never_runs` matters: it proves the tool body ran with the forged argument present, which a result-only check could not show.
+**What it taught me.** With `extra="ignore"`, `authorized: true` was not refused. It was silently dropped, and the tool returned a normal, successful preview. Nothing visibly went wrong, and that is the danger: the model would believe its approval flag had been accepted, and the result gave no sign that anything had been discarded. The golden case caught it only because a1 expects a refusal, not just any successful-looking output. The same red run also showed why the spy in `test_forged_identity_or_approval_never_runs` matters: it records that the tool body actually executed on a request carrying a forged approval, which a check of the result alone could not show.
 
 ## The green run
 
