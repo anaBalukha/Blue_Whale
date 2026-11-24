@@ -267,3 +267,33 @@ Teammate review: pending.
 **Correction and verification:** PR #38. The builder now refuses unknown fields. Against the old code the two new tests fail; with the fix all 14 HW1 tests pass, from any folder.
 
 **Limitation:** HW1 tests are not part of CI (`pytest -q tests`); they are run explicitly.
+
+## Independent streaming evaluation - Issue #42
+
+Date: 2026-11-24
+
+Owner: Mikheili Kakhniashvili, Eval Keeper.
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Write independent streaming regression tests and
+verify incremental HTTP delivery through a local server.
+
+Context: Lab 6, PR #41, the existing tool safety gates
+and the streaming interface contract.
+
+Verification: Eight independent tests passed.
+The full suite passed 124 tests.
+Real local HTTP delivery was verified using a controlled
+offline model stream. The first token reached the client
+before the simulated model was allowed to finish.
+
+Evidence: docs/streaming-eval.md and
+evals/results/stream-transport-offline.json.
+
+Limitations: No live provider requests were made.
+
+Next time: Verify streaming over an actual HTTP connection
+in addition to using an in-process HTTP test client.
+
+Human review: pending.
