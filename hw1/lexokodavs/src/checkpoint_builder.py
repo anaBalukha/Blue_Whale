@@ -21,11 +21,21 @@ def main():
         print(json.dumps(error_response("Payload must be a JSON object.")))
         sys.exit(2)
 
+    # Unknown fields (for example "authorized": true) are refused, not ignored:
+    # a flag in the payload must never be mistaken for proof of user approval.
+    if set(payload) != {"previous", "user_changes"}:
+        print(json.dumps(error_response("Payload must contain exactly 'previous' and 'user_changes'.")))
+        sys.exit(2)
+
     previous = payload.get("previous")
     user_changes = payload.get("user_changes")
 
     if not isinstance(previous, dict) or not isinstance(user_changes, dict):
         print(json.dumps(error_response("Both 'previous' and 'user_changes' must be objects.")))
+        sys.exit(2)
+
+    if set(previous) != {"version", "decisions"}:
+        print(json.dumps(error_response("'previous' must contain exactly 'version' and 'decisions'.")))
         sys.exit(2)
 
     prev_version = previous.get("version")
