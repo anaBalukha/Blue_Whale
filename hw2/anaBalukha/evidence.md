@@ -201,3 +201,41 @@ Exact JSON Schema parity for every edge case is not
 claimed by this verification.
 
 No paid API requests were required.
+
+## Extended contract verification references
+
+Date: 2026-11-28.
+
+The individual contract was condensed to follow the course
+template. Extended technical references are retained here.
+
+- [Previous detailed contract](https://github.com/anaBalukha/Blue_Whale/blob/7653ffeb66c0aa5ff4ae3aab34edee7cf2358d5c/hw2/anaBalukha/contract.md)
+- [Input contract](../../src/contracts.py)
+- [Original comparison function](../../src/drift_core.py)
+- [Drift tool](../../src/ana_drift_tool.py)
+- [Registry](../../src/tools.py)
+- [Execution gate](../../src/act.py)
+- [MCP server](../../src/mcp_server.py)
+- [Direct tests](../../tests/test_ana_drift_tool.py)
+- [MCP tests](../../tests/test_ana_mcp.py)
+- [Shared protocol tests](../../tests/test_mcp_protocol_boundary.py)
+- [Gate tests](../../tests/test_tool_gates.py)
+- [Golden runner](../../tests/test_tool_golden.py)
+- [Individual golden cases](../../evals/tools/anaBalukha.yaml)
+
+The tool never accepts model-supplied user_changes.
+It neither authenticates nor persists supplied state.
+
+Audit logging is configurable using BLUE_WHALE_TOOL_LOG.
+If logging fails, the shared executor returns a safe failure.
+Validation errors use sanitized field locations.
+
+The individual drift tool remains distinct from the shared
+answer_from_trusted_sources tool introduced in PR #58.
+
+PR #62 subsequently hardened the shared published schemas
+without weakening runtime constraints. Ana's five golden
+cases passed, and the shared suite reached 185 passing tests.
+
+- [PR #62](https://github.com/anaBalukha/Blue_Whale/pull/62)
+- [Successful CI](https://github.com/anaBalukha/Blue_Whale/actions/runs/46095902952)
