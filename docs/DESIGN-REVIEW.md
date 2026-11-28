@@ -1,5 +1,17 @@
 # Design Review - Blue Whale
 
+> **Historical snapshot — clarification added November 28, 2026.**
+>
+> This document preserves the original Design Review assessment.
+> Its architecture, implementation status, evaluation results and
+> pending work describe the project at that milestone, not the
+> current application.
+>
+> The original graded snapshot is available at the
+> [design-review tag](https://github.com/anaBalukha/Blue_Whale/tree/design-review).
+> See the [current README](../README.md) for updated status and evidence.
+
+
 Team: Blue Whale
 Repository: https://github.com/anaBalukha/Blue_Whale
 

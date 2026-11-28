@@ -385,3 +385,55 @@ sanitized errors, audit count and complete published
 schemas instead of checking rejection alone.
 
 Human review: pending.
+
+## README reproducibility correction - Issue #54
+
+Date: 2026-11-28
+
+Owner: Ana Balukhashvili, Repo Keeper.
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Correct outdated setup instructions, implementation
+status and evaluation references in the README.
+
+Context: Existing application, CI configuration, shared
+tool contracts and recorded regression evidence.
+
+Correction: Document reproducible offline commands,
+all three read-only tools, HTTP and SSE interfaces,
+and unfinished product requirements.
+
+The original Design Review was preserved and labeled
+as a historical snapshot.
+
+What went wrong: The initial clean-tree verification
+produced 17 test collection errors because the local
+virtual environment lacked required dependencies.
+
+Resolution: Explicitly select the repository's Python
+executable and install dependencies from requirements.txt.
+
+All dependency imports passed and pip check reported
+no broken requirements.
+
+Final verification in a clean copy of the tracked tree:
+
+- Shared product tests: 155/155 passed.
+- Offline index: 23 chunks.
+- Offline RAG goldens: 5/5 passed.
+- Git whitespace validation: passed.
+
+Limitations: The verification reused an existing virtual
+environment after installing its missing dependencies.
+It was not a completely new virtual environment.
+
+No product code, dependency requirements or CI
+configuration changed.
+
+No live model requests were made.
+
+Next time: Verify the Python executable and dependency
+imports before starting clean-tree regression tests.
+
+Human review: pending.
