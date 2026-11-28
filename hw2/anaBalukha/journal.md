@@ -6,6 +6,8 @@ work happened during the corresponding lecture weeks.
 
 ## Week 5 — Tool Contract
 
+**Implementation references:** [DriftArguments](../../src/contracts.py#L92), [drift tool](../../src/ana_drift_tool.py), [direct tests](../../tests/test_ana_drift_tool.py), [product PR #28](https://github.com/anaBalukha/Blue_Whale/pull/28).
+
 **Retrospective reflection — 8 November 2026**
 
 I applied the Tool Contract pattern to my Blue Whale drift
@@ -24,6 +26,8 @@ schema before writing the integration code, so unsafe
 arguments are rejected from the beginning.
 
 ## Week 6 — Session State
+
+**Experiment references:** [shared execution gate](../../src/act.py), [drift tool](../../src/ana_drift_tool.py), [Session State experiment](evidence.md). No cross-call memory lifetime or deletion mechanism is implemented.
 
 **Retrospective reflection — 8 November 2026**
 
@@ -72,6 +76,8 @@ state storage, and test isolation between sessions.
 The experiment does not implement persistent memory.
 
 ## Week 7 — Supervised Autonomy Loop
+
+**Implementation references:** [bounded loop](../../src/act.py), [MCP tests](../../tests/test_ana_mcp.py), [red CI experiment #29](https://github.com/anaBalukha/Blue_Whale/pull/29). The checkpoint commit remains a proposed confirmation-required action.
 
 **Work and reflection — 8 November 2026**
 
