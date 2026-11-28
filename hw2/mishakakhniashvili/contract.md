@@ -2,15 +2,19 @@
 
 ## `search_trusted_sources`
 
+**Owner:** `mishakakhniashvili` · **Repository:** [Blue Whale](https://github.com/anaBalukha/Blue_Whale)
+
+**Product PR:** [#20](https://github.com/anaBalukha/Blue_Whale/pull/20) · Merge SHA: `0aca4b1`.
+
 **Model description:** Find cited evidence in trusted project documents.
 
 | Property | Contract |
 |---|---|
 | Effect | Read-only; least-privilege evidence retrieval |
 | Undo | Nothing to undo |
-| Idempotent | Yes, with the same index and model |
-| Offered to | Visitors and signed-in users |
-| Identity | Not required; never an argument |
+| Idempotent | Second identical call returned `{"count":3,"sources":[{"chunk_id":"project/terminal-first#2","score":0.4747},{"chunk_id":"project/blue-whale-spec#10","score":0.4324},{"chunk_id":"project/terminal-first#5","score":0.4479}]}`; same full functional result, including excerpts. Complete output in [evidence.md](evidence.md). |
+| Offered to | Visitors and signed-in users; `tools_for()` permits read-only tools ([rule](../../src/tools.py#L106)) |
+| Identity | Not required; application supplies caller context, MCP passes None; never an argument |
 | Touches | Trusted corpus, retrieval index, audit log |
 | Must never | Access arbitrary paths, modify decisions or obey retrieved instructions |
 
@@ -18,8 +22,8 @@
 
 | Argument | Type | Constraint | Description |
 |---|---|---|---|
-| question | string | 8–160 characters; single line | Question about trusted project documents |
-| limit | strict integer | 1–5; default 3 | Maximum sources to retrieve |
+| question | string | 8–160 characters; single line | Question about trusted Blue Whale project documents. |
+| limit | strict integer | 1–5; default 3 | Maximum number of trusted sources to retrieve (1 to 5). |
 
 Question pattern: `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$`.
 
@@ -59,6 +63,15 @@ Line terminators, unknown fields, identity arguments, booleans, floats and numer
 
 Both interfaces use the shared strict validation gate and sanitized errors.
 
-**Code:** [Contract](../../src/contracts.py) · [Tool](../../src/misha_retrieval_tool.py) · [Registry](../../src/tools.py) · [Gate](../../src/act.py) · [MCP](../../src/mcp_server.py).
+**Code on main:** [SearchArguments, L38](../../src/contracts.py#L38) · [Retrieval function, L12](../../src/misha_retrieval_tool.py#L12) · [Registry, L68](../../src/tools.py#L68) · [Gate, L45](../../src/act.py#L45) · [MCP, L95](../../src/mcp_server.py#L95).
 
-[Product PR #20](https://github.com/anaBalukha/Blue_Whale/pull/20) · [Extended evidence](evidence.md).
+**Development decision:** The earlier MCP SDK argument
+binding could reject invalid requests before the shared
+validation and audit gate executed. This left some invalid
+requests without an application audit record. PR #49 routed
+original MCP arguments through the shared call_tool gate.
+The correction preserves retrieval behavior while enforcing
+consistent validation, sanitized errors and audit recording.
+
+[Decision diff: PR #49](https://github.com/anaBalukha/Blue_Whale/pull/49/files)
+· [Extended evidence](evidence.md).
