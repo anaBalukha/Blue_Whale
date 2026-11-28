@@ -44,6 +44,33 @@ Next time I would define where trusted checkpoints come
 from, how long they are retained, when they are updated,
 and how a user deletes them before adding persistent state.
 
+### Week 6 follow-up — Session State experiment
+
+**Experiment performed: 2026-11-28.**
+
+I executed four independent offline calls through the
+shared call_tool validation gate.
+
+- PostgreSQL compared with PostgreSQL returned consistent.
+- Omitting previous state produced a validation error.
+- Supplying only a terminal-interface decision and proposing
+  MongoDB returned consistent, with no retained database decision.
+- Supplying PostgreSQL again and proposing MongoDB returned
+  drift, with the expected and proposed values in the conflict.
+
+The experiment demonstrates that my tool depends on
+explicitly supplied state and does not retain earlier
+decisions between calls.
+
+A consistent result does not establish that the supplied
+state is complete or authentic.
+
+Next time, I would define session scope, retention,
+write conditions and deletion before implementing trusted
+state storage, and test isolation between sessions.
+
+The experiment does not implement persistent memory.
+
 ## Week 7 — Supervised Autonomy Loop
 
 **Work and reflection — 8 November 2026**

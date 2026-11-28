@@ -112,3 +112,92 @@ Red CI evidence:
 https://github.com/anaBalukha/Blue_Whale/pull/29
 
 https://github.com/anaBalukha/Blue_Whale/actions/runs/42497154342
+
+## Final HW2 verification follow-up
+
+Date: 2026-11-28.
+
+The original product and red CI measurements above
+remain unchanged as historical evidence.
+
+### Subsequent corrections
+
+- [PR #49](https://github.com/anaBalukha/Blue_Whale/pull/49):
+  MCP validation boundary, sanitized errors, audit coverage
+  and published schema corrections.
+- [PR #53](https://github.com/anaBalukha/Blue_Whale/pull/53):
+  Week 7 journal and consequential checkpoint confirmation.
+- [PR #58](https://github.com/anaBalukha/Blue_Whale/pull/58):
+  Separate shared Lab 5 grounded-answer tool.
+
+The individual check_decision_drift function is distinct
+from the shared answer_from_trusted_sources tool.
+
+The shared tool was introduced after the original
+individual HW2 implementation.
+
+### Week 6 Session State experiment
+
+Experiment date: 2026-11-28.
+
+Four independent offline calls were executed through
+the actual shared call_tool gate.
+
+| Previous state | Candidate | Observed result |
+|---|---|---|
+| PostgreSQL | PostgreSQL | consistent |
+| Missing | MongoDB | Validation failure |
+| Terminal interface only | MongoDB | consistent |
+| PostgreSQL | MongoDB | drift |
+
+The missing-state call returned:
+
+    invalid arguments: state: Provide this required argument
+
+The final call returned a database conflict:
+
+    field: database
+    expected: PostgreSQL
+    proposed: MongoDB
+
+The experiment demonstrates that the tool does not retain
+previous decisions across these calls. A consistent result
+does not establish that the supplied state is complete
+or authentic.
+
+Both Pattern Journal copies record this observation.
+
+### Current verification
+
+| Check | Actual result |
+|---|---|
+| Direct, MCP and shared protocol tests | 27/27 passed |
+| Individual HW2 goldens | 5/5 passed |
+| Full product regression | 178/178 passed |
+| Session State experiment | 4/4 expected outcomes |
+| Python compilation | Passed |
+
+Configuration: BLUE_WHALE_OFFLINE=1 and
+BLUE_WHALE_MIN_SCORE=0.30.
+
+### External MCP observation
+
+An earlier VS Code demonstration displayed the actual
+check_decision_drift tool returning drift for a proposed
+change from PostgreSQL to MongoDB.
+
+This records the earlier observation, not a new external
+host execution.
+
+### Limitations
+
+Persistent session storage, state authentication and
+checkpoint confirmation remain separate project work.
+
+Live model-driven execution is not established by these
+offline tests.
+
+Exact JSON Schema parity for every edge case is not
+claimed by this verification.
+
+No paid API requests were required.

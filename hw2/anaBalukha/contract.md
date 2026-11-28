@@ -17,14 +17,18 @@ decisions and report contradictions without changing state.
 | Resources | Existing `src/drift_core.py` function, in memory |
 | Must never | Change decisions, invent user approval, accept model-supplied overrides, or access arbitrary files |
 
+**Model-facing description:** Compare supplied prior and proposed project decisions without modifying either.
+
+The tool is least-privilege because it only compares supplied decisions in memory. It cannot modify trusted state. Audit logging is its only execution-side write.
+
 ## Inputs
 
 The Pydantic `DriftArguments` model has `extra="forbid"`.
 
-| Argument | Type | Constraints |
-|---|---|---|
-| `state` | Dictionary of strings | 1–8 confirmed previous decisions |
-| `candidate` | Dictionary of strings | 1–8 proposed decisions |
+| Argument | Type | Constraints | Description |
+|---|---|---|---|
+| `state` | dict[str, str] | 1–8 decisions | Prior project decisions supplied for comparison |
+| `candidate` | dict[str, str] | 1–8 decisions | Proposed project decisions |
 
 Dictionary keys:
 - 1–32 characters.
@@ -35,7 +39,7 @@ Dictionary keys:
 Dictionary values:
 - 1–80 characters.
 - Must begin with an ASCII letter or digit.
-- Remaining characters limited by the `DecisionValue` pattern in `src/contracts.py`.
+- Pattern: `^[A-Za-z0-9][A-Za-z0-9 _.,:/()+-]*$`.
 
 No user, student, account, `caller_id`, or `user_changes`
 argument is permitted. There are no numeric input arguments.
@@ -47,19 +51,27 @@ The Pydantic `DriftResult` contains:
 | Field | Type | Meaning |
 |---|---|---|
 | `status` | `drift` or `consistent` | Whether a contradiction exists |
-| `effective_state` | Dictionary | Prior decisions used for comparison |
-| `conflicts` | List | Each conflict has `field`, `expected`, and `proposed` |
+| `effective_state` | dict[str, str] | Prior decisions used for comparison |
+| `conflicts` | list[Conflict] | Detected conflicts |
+| `conflicts[].field` | string | Decision key |
+| `conflicts[].expected` | string | Prior value |
+| `conflicts[].proposed` | string | Proposed value |
 
 ## Expected failures
 
-| Condition | Behavior |
+| Condition | Actual message or message fragment |
 |---|---|
-| Missing required argument | Refuse and request the missing argument |
-| Invalid value or key | Refuse with a safe validation error |
-| Unexpected identity or override | Refuse before running the function |
-| Tool not offered | Refuse before execution |
-| Unexpected execution failure | Return a generic safe error |
-| Audit log unavailable | Return a safe failure instead of an unlogged success |
+| Missing argument | Provide this required argument |
+| Invalid pattern | Use only permitted characters |
+| Invalid string length | Text is too short / Text is too long |
+| Invalid decision map | Use a value that satisfies the tool contract |
+| Unexpected argument | Remove this unexpected argument |
+| Tool not offered | Tool not available. Choose an offered tool. |
+| Execution failure | Tool execution failed unexpectedly. Ask the operator to check the service, then retry. |
+| Audit failure | Audit logging unavailable. Ask the operator to restore logging and retry. |
+
+Validation errors include sanitized field locations,
+not raw argument values.
 
 ## Security and limitations
 
@@ -86,6 +98,10 @@ type and latency.
 
 Raw decision values and caller identity are not logged.
 
+The log fields are `ts`, `tool`, `ok`, `error`, `caller_type` and `latency_ms`.
+
+The destination is configurable through `BLUE_WHALE_TOOL_LOG`.
+
 ## Verification and source links
 
 - [Input contract](https://github.com/anaBalukha/Blue_Whale/blob/main/src/contracts.py)
@@ -99,3 +115,21 @@ Raw decision values and caller identity are not logged.
 - [MCP tests](https://github.com/anaBalukha/Blue_Whale/blob/main/tests/test_ana_mcp.py)
 
 Product PR: https://github.com/anaBalukha/Blue_Whale/pull/28
+
+
+Golden runner: `tests/test_tool_golden.py`.
+
+Shared protocol regression tests:
+`tests/test_mcp_protocol_boundary.py`.
+
+## Distinction from the shared Lab 5 tool
+
+My individual tool is `check_decision_drift`.
+
+The shared Lab 5 tool is `answer_from_trusted_sources`,
+implemented separately in PR #58 after the original HW2
+implementation.
+
+- [Shared tool implementation](../../src/team_answer_tool.py)
+- [Shared tool contract](../../docs/tool-contracts.md)
+- [PR #58](https://github.com/anaBalukha/Blue_Whale/pull/58)
