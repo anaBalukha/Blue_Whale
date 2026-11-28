@@ -83,3 +83,12 @@ class DriftArguments(BaseModel):
 
     state: DecisionMap
     candidate: DecisionMap
+
+
+class GroundedAnswerArguments(BaseModel):
+    """Answer from trusted sources without modifying project state."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    question: Question
+    limit: Limit = 5

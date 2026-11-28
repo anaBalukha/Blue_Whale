@@ -10,6 +10,7 @@ from mcp.types import CallToolResult, TextContent, ToolAnnotations
 from .act import call_tool
 from .contracts import Question, Limit, DecisionMap
 from .tools import SearchResult, tools_for
+from .team_answer_tool import GroundedAnswerResult
 from .ana_drift_tool import DriftResult
 from .lexo_checkpoint_tool import CheckpointVersion, PreviewResult
 
@@ -199,6 +200,45 @@ def preview_checkpoint_update(
 
     return PreviewResult.model_validate(outcome["result"])
 
+
+@mcp.tool(
+    annotations=READ_ONLY,
+    description=(
+        "Answer a project question from trusted documents "
+        "with validated citations or a safe refusal."
+    ),
+)
+def answer_from_trusted_sources(
+    question: Question,
+    ctx: Context,
+    limit: Limit = 5,
+) -> GroundedAnswerResult:
+    """Register the typed interface for the shared MCP gate."""
+
+    params = ctx.request_context.params or {}
+    raw = params.get("arguments")
+
+    if not isinstance(raw, dict):
+        raise ToolError(
+            "Provide the original tool arguments as an object."
+        )
+
+    outcome = call_tool(
+        {
+            "id": str(ctx.request_id),
+            "name": "answer_from_trusted_sources",
+            "arguments": raw,
+        },
+        tools_for(None),
+        None,
+    )
+
+    if not outcome["ok"]:
+        raise ToolError(outcome["error"])
+
+    return GroundedAnswerResult.model_validate(
+        outcome["result"]
+    )
 
 if __name__ == "__main__":
     mcp.run()

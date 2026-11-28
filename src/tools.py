@@ -5,6 +5,8 @@ from typing import Callable
 from pydantic import BaseModel
 
 from .contracts import SearchArguments
+from .contracts import GroundedAnswerArguments
+from .team_answer_tool import run_grounded_answer
 from .contracts import DriftArguments
 from .ana_drift_tool import DriftResult, run_drift
 from .index import IndexMismatch, load
@@ -83,6 +85,17 @@ TOOLS = {
             "Calculate a proposed versioned checkpoint and changed fields "
             "without modifying trusted state (read-only preview)."
         ),
+    ),
+    "answer_from_trusted_sources": Tool(
+        name="answer_from_trusted_sources",
+        args=GroundedAnswerArguments,
+        run=run_grounded_answer,
+        description=(
+            "Answer a project question using trusted Blue Whale "
+            "documents. Return validated citations or a safe refusal. "
+            "Does not modify trusted state."
+        ),
+        writes=False,
     ),
 }
 

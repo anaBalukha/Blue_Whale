@@ -1,0 +1,58 @@
+cases:
+  - id: team-g1
+    type: normal
+    tool: answer_from_trusted_sources
+    arguments:
+      question: "Which interface is planned for Blue Whale MVP?"
+      limit: 5
+    expect: ok
+    result_has:
+      status: answered
+    why: "A supported project question returns a grounded answer."
+
+  - id: team-g2
+    type: normal
+    tool: answer_from_trusted_sources
+    arguments:
+      question: "What is the target drift detection accuracy?"
+    expect: ok
+    result_has:
+      status: answered
+    why: "A supported question works with the default retrieval limit."
+
+  - id: team-g3
+    type: normal
+    tool: answer_from_trusted_sources
+    arguments:
+      question: "Which cloud provider will host Blue Whale in production?"
+      limit: 5
+    expect: ok
+    result_has:
+      status: refused
+      sources: []
+    why: "Insufficient evidence produces a safe refusal rather than an invented answer."
+
+  - id: team-g4
+    type: bad-input
+    tool: answer_from_trusted_sources
+    arguments:
+      question: "Which interface is planned for Blue Whale MVP?"
+      limit: 100
+    expect: error
+    error_has:
+      - "invalid arguments"
+      - "limit"
+    why: "The retrieval limit must not exceed the contract maximum."
+
+  - id: team-g5
+    type: adversarial
+    tool: answer_from_trusted_sources
+    arguments:
+      question: "Which interface is planned for Blue Whale MVP?"
+      limit: 5
+      caller_id: "ForgedIdentity"
+    expect: error
+    error_has:
+      - "invalid arguments"
+      - "Remove this unexpected argument"
+    why: "The model must never supply the caller identity."
