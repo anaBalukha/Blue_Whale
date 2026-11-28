@@ -71,3 +71,41 @@ goldens immediately after changing the contract, and
 always verify the Python environment before testing.
 
 A live model-driven tool invocation was not verified.
+
+### Week 7 follow-up — November 28, 2026
+
+The consequential action I propose for Blue Whale is
+committing a new checkpoint into trusted conversation state.
+
+My drift-checking tool can identify contradictions between
+previous and proposed decisions, but detecting a conflict
+does not authorize a change to the trusted state.
+
+For example, if the model proposes replacing PostgreSQL
+with MongoDB, the application must present the proposed
+change and wait for explicit human confirmation before
+committing the new decision.
+
+My streaming interface can deliver model responses and
+tool outcomes to the user, but receiving a streamed tool
+result must not be interpreted as human approval.
+
+The confirmation endpoint must execute only previously
+proposed actions identified by their action IDs after
+receiving explicit human confirmation.
+
+Repeated confirmation must not apply the same change twice.
+
+This checkpoint confirmation workflow is proposed and
+still requires team agreement and implementation.
+
+Since my original journal entry, I have implemented
+the streaming gateway and local HTTP interface in PR #41.
+
+I also reviewed the shared MCP protocol correction in
+PR #49, which verified argument validation, sanitized
+errors, audit logging, and matching published schemas.
+
+Next time, I would specify the approval boundary before
+integrating the model loop with consequential actions,
+and test that no trusted state changes before confirmation.
