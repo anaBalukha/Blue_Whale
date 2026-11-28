@@ -43,3 +43,34 @@ I also deliberately changed `extra="forbid"` to `extra="ignore"` on a temporary 
 One thing I would do differently is test the MCP request boundary earlier and verify behavior through both interfaces before expanding the implementation.
 
 A live model-driven tool call remains untested because I do not currently have an OpenRouter API key.
+
+### Week 7 follow-up — November 28, 2026
+
+The consequential action I propose for Blue Whale is
+committing a new checkpoint into trusted conversation state.
+For example, replacing an established PostgreSQL decision
+with MongoDB must wait for explicit human confirmation.
+
+The checkpoint preview tool is read-only. It may calculate
+a proposed change, but the model must not treat that proposal
+as authorization to update trusted state.
+
+The application must record the person's confirmation before
+executing the consequential action. Repeated confirmation
+must not execute the same action twice.
+
+The actual checkpoint commit and confirmation workflow
+remain unimplemented and require team agreement.
+
+Since my original journal entry, I have also verified the
+shared tool boundary through the actual MCP client. The
+correction in PR #49 passed all 16 new protocol and schema
+regression tests and all 155 shared product tests.
+
+An OpenRouter API key is now configured and verified, but
+live model-driven tool evaluation remains pending because
+the account has no available credits.
+
+Next time, I would distinguish read-only proposals from
+consequential execution in the contract and test the
+confirmation boundary before enabling any state changes.
