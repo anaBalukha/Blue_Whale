@@ -1,10 +1,11 @@
 """Blue Whale MCP server using the same tool contract and gates."""
+import asyncio
 import json
 
 from mcp.server import MCPServer
 from mcp.server.mcpserver import Context
 from mcp.server.mcpserver.exceptions import ToolError
-from mcp.types import ToolAnnotations
+from mcp.types import CallToolResult, TextContent, ToolAnnotations
 
 from .act import call_tool
 from .contracts import Question, Limit, DecisionMap
@@ -13,7 +14,69 @@ from .ana_drift_tool import DriftResult
 from .lexo_checkpoint_tool import CheckpointVersion, PreviewResult
 
 
-mcp = MCPServer(
+class BlueWhaleMCPServer(MCPServer):
+    """Expose the shared strict tool gate through MCP."""
+
+    async def call_tool(
+        self, name, arguments, context=None
+    ):
+        # Validate the original arguments at our own boundary.
+        # Do not send them through the SDK's typed binder first.
+        outcome = await asyncio.to_thread(
+            call_tool,
+            {
+                "name": name,
+                "arguments": arguments,
+            },
+            tools_for(None),
+            None,
+        )
+
+        if not outcome["ok"]:
+            return CallToolResult(
+                content=[
+                    TextContent(
+                        type="text",
+                        text=outcome["error"],
+                    )
+                ],
+                is_error=True,
+            )
+
+        result = outcome["result"]
+
+        return CallToolResult(
+            content=[
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        result,
+                        ensure_ascii=False,
+                    ),
+                )
+            ],
+            structured_content=result,
+            is_error=False,
+        )
+
+    async def list_tools(self):
+        registered = await super().list_tools()
+        allowed = tools_for(None)
+
+        return [
+            item.model_copy(
+                update={
+                    "input_schema": allowed[
+                        item.name
+                    ].schema()["function"]["parameters"]
+                }
+            )
+            for item in registered
+            if item.name in allowed
+        ]
+
+
+mcp = BlueWhaleMCPServer(
     "blue-whale",
     instructions="Read trusted evidence without modifying decisions.",
 )

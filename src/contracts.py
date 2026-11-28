@@ -35,12 +35,22 @@ class SearchArguments(BaseModel):
 
 # Ana's HW2: bounded, read-only decision comparison.
 
+DECISION_KEY_PATTERN = r"^[a-z][a-z0-9_]*$"
+
+
+def _decision_map_schema(schema: dict) -> None:
+    """Publish the same key restriction used at runtime."""
+    schema.setdefault("propertyNames", {})[
+        "pattern"
+    ] = DECISION_KEY_PATTERN
+
+
 DecisionKey = Annotated[
     str,
     Field(
         min_length=1,
         max_length=32,
-        pattern=r"^[a-z][a-z0-9_]*$",
+        pattern=DECISION_KEY_PATTERN,
         description="Lowercase decision field name.",
     ),
 ]
@@ -61,6 +71,7 @@ DecisionMap = Annotated[
         min_length=1,
         max_length=8,
         description="One to eight project decisions.",
+        json_schema_extra=_decision_map_schema,
     ),
 ]
 
