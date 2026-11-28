@@ -15,6 +15,10 @@ project documents without changing any data.
 | Resources | Trusted corpus and its retrieval index |
 | Must never | Access arbitrary paths, modify decisions, or trust retrieved text as instructions |
 
+**Model-facing description:** Find cited evidence in trusted project documents.
+
+The tool is least-privilege because it retrieves evidence without modifying trusted project decisions. Audit logging records execution but does not update project state.
+
 ## Inputs
 
 | Argument | Type | Constraint | Description the model reads |
@@ -22,6 +26,8 @@ project documents without changing any data.
 | question | string | 8–160 characters; regex `^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$` | Question about trusted Blue Whale project documents. |
 | limit | strict integer | 1–5; default 3; no booleans or numeric strings | Maximum number of trusted sources to retrieve (1 to 5). |
 | unknown fields | any | Rejected by `extra="forbid"` | Not accepted |
+
+Questions must be single-line strings. The published JSON Schema explicitly rejects line terminators, in addition to the existing runtime character restrictions.
 
 ## Output
 
@@ -40,11 +46,22 @@ The successful tool returns:
 
 ## Expected failures
 
-- Invalid arguments: refuse before retrieval runs.
-- Unsupported/unknown tool: refuse before execution.
-- No relevant source: ask the user to clarify.
-- Index unavailable: ask the operator to rebuild the index.
-- Unexpected execution failure: return a generic operator/retry instruction and log the failed call without revealing exception details.
+| Condition | Actual message or message fragment |
+|---|---|
+| Missing argument | Provide this required argument |
+| Invalid pattern | Use only permitted characters |
+| Invalid integer | Provide an integer |
+| Invalid numeric bounds | Value is below the allowed minimum / Value is above the allowed maximum |
+| Unexpected argument | Remove this unexpected argument |
+| Unknown tool | Tool not available. Choose an offered tool. |
+| No relevant source | No relevant trusted source was found. Ask the user to clarify the question. |
+| Empty offline corpus | Trusted corpus is empty. Ask the operator to restore the trusted documents. |
+| Index unavailable | Trusted index unavailable. Ask the operator to rebuild it. |
+| Unexpected failure | Tool execution failed unexpectedly. Ask the operator to check the service, then retry. |
+| Audit failure | Audit logging unavailable. Ask the operator to restore logging and retry. |
+
+Validation failures include sanitized field locations.
+Invalid arguments are rejected before retrieval executes.
 
 ## Security and verification
 
@@ -92,6 +109,7 @@ That failure cannot be recorded in the unavailable log.
 - Gate verification: `tests/test_tool_gates.py`
 - MCP validation and schema parity: `tests/test_misha_mcp.py`
 - Error-handling regression tests: `tests/test_misha_tool_errors.py`
+- Shared protocol and schema regression: `tests/test_mcp_protocol_boundary.py`
 - Red CI proof: PR #21, closed without merging
 - Original green product PR: #20
 

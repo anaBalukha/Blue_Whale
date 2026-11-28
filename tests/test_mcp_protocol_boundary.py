@@ -102,6 +102,47 @@ CASES = [
 ]
 
 
+# Trailing newline regression cases.
+CASES.extend([
+    (
+        "search_trusted_sources",
+        {**SEARCH, "question": SEARCH["question"] + "\n"},
+        False,
+    ),
+    (
+        "answer_from_trusted_sources",
+        {**SEARCH, "question": SEARCH["question"] + "\n"},
+        False,
+    ),
+    (
+        "check_decision_drift",
+        {**DRIFT, "state": {"database\n": "PostgreSQL"}},
+        False,
+    ),
+    (
+        "check_decision_drift",
+        {**DRIFT, "state": {"database": "PostgreSQL\n"}},
+        False,
+    ),
+    (
+        "preview_checkpoint_update",
+        {
+            **PREVIEW,
+            "previous_decisions": {"database\n": "PostgreSQL"},
+        },
+        False,
+    ),
+    (
+        "preview_checkpoint_update",
+        {
+            **PREVIEW,
+            "proposed_changes": {"database": "MongoDB\n"},
+        },
+        False,
+    ),
+])
+
+
 def records(path):
     if not path.exists():
         return []

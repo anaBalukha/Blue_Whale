@@ -173,3 +173,71 @@ def test_unavailable_audit_log_returns_safe_failure(
     assert result["result"] is None
     assert "Audit logging unavailable" in result["error"]
     assert str(tmp_path) not in str(result)
+
+
+def test_empty_corpus_actionable(monkeypatch, tmp_path):
+    import asyncio
+    from mcp import Client
+    from src.mcp_server import mcp
+
+    log = tmp_path / "tools.jsonl"
+
+    monkeypatch.setenv("BLUE_WHALE_OFFLINE", "1")
+    monkeypatch.setenv("BLUE_WHALE_TOOL_LOG", str(log))
+    monkeypatch.setattr("src.chunk.load_corpus", lambda path: [])
+
+    arguments = {"question": QUESTION}
+
+    expected = (
+        "Trusted corpus is empty. "
+        "Ask the operator to restore the trusted documents."
+    )
+
+    result = call_tool(
+        {
+            "name": "search_trusted_sources",
+            "arguments": json.dumps(arguments),
+        },
+        tools_for(None),
+        None,
+    )
+
+    assert result["ok"] is False
+    assert result["result"] is None
+    assert result["error"] == expected
+
+    rows = log.read_text(encoding="utf-8").splitlines()
+    assert len(rows) == 1
+
+    recorded = json.loads(rows[0])
+    assert recorded["ok"] is False
+    assert recorded["error"] == expected
+    assert QUESTION not in rows[0]
+
+    log.unlink()
+
+    async def run():
+        async with Client(mcp) as client:
+            return await client.call_tool(
+                "search_trusted_sources",
+                arguments,
+            )
+
+    response = asyncio.run(run())
+
+    assert response.is_error
+
+    text = " ".join(
+        getattr(item, "text", "")
+        for item in response.content
+    )
+
+    assert expected in text
+
+    rows = log.read_text(encoding="utf-8").splitlines()
+    assert len(rows) == 1
+
+    recorded = json.loads(rows[0])
+    assert recorded["ok"] is False
+    assert recorded["error"] == expected
+    assert QUESTION not in rows[0]

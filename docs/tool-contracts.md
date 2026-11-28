@@ -1,5 +1,16 @@
 # Blue Whale — Tool Contracts
 
+## Shared validation requirements
+
+Questions, decision keys and decision values are single-line
+strings. Published JSON Schemas explicitly reject carriage
+returns, newlines and Unicode line separators.
+
+The existing runtime patterns and length restrictions remain
+unchanged. Runtime validation remains authoritative.
+
+Regression coverage: `tests/test_mcp_protocol_boundary.py`.
+
 ## check_decision_drift
 
 Owner: Ana Balukhashvili (@anaBalukha)

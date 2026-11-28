@@ -3,12 +3,23 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
+# JSON Schema regex engines can match $ before a final newline.
+# Preserve runtime patterns and explicitly reject line terminators.
+LINE_TERMINATOR_PATTERN = r"[\r\n\u2028\u2029]"
+
+
+def _single_line_schema(schema: dict) -> None:
+    """Keep published string validation aligned with runtime."""
+    schema["not"] = {"pattern": LINE_TERMINATOR_PATTERN}
+
+
 Question = Annotated[
     str,
     Field(
         min_length=8,
         max_length=160,
         description="Question about trusted Blue Whale project documents.",
+        json_schema_extra=_single_line_schema,
         pattern=r"^[A-Za-z0-9][A-Za-z0-9 ,.:;?!'()\-]*$",
     ),
 ]
@@ -40,9 +51,9 @@ DECISION_KEY_PATTERN = r"^[a-z][a-z0-9_]*$"
 
 def _decision_map_schema(schema: dict) -> None:
     """Publish the same key restriction used at runtime."""
-    schema.setdefault("propertyNames", {})[
-        "pattern"
-    ] = DECISION_KEY_PATTERN
+    names = schema.setdefault("propertyNames", {})
+    names["pattern"] = DECISION_KEY_PATTERN
+    _single_line_schema(names)
 
 
 DecisionKey = Annotated[
@@ -52,6 +63,7 @@ DecisionKey = Annotated[
         max_length=32,
         pattern=DECISION_KEY_PATTERN,
         description="Lowercase decision field name.",
+        json_schema_extra=_single_line_schema,
     ),
 ]
 
@@ -62,6 +74,7 @@ DecisionValue = Annotated[
         max_length=80,
         pattern=r"^[A-Za-z0-9][A-Za-z0-9 _.,:/()+-]*$",
         description="Single project decision value.",
+        json_schema_extra=_single_line_schema,
     ),
 ]
 
