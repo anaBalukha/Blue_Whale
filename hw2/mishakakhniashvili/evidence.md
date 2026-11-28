@@ -57,3 +57,97 @@ OpenRouter API key was unavailable.
 Product PR #20 was approved by Ana and merged.
 The post-merge CI run passed:
 https://github.com/anaBalukha/Blue_Whale/actions/runs/42429188145
+
+
+## Final HW2 verification follow-up
+
+Date: 2026-11-28.
+
+The original 40-test result and historical red and
+green CI evidence remain unchanged.
+
+### Subsequent corrections
+
+- [PR #25](https://github.com/anaBalukha/Blue_Whale/pull/25):
+  Tool error handling and regression verification.
+- [PR #26](https://github.com/anaBalukha/Blue_Whale/pull/26):
+  Sanitized errors and audit-log failure handling.
+- [PR #49](https://github.com/anaBalukha/Blue_Whale/pull/49):
+  Shared MCP protocol validation and schema correction.
+- [PR #51](https://github.com/anaBalukha/Blue_Whale/pull/51):
+  Week 7 consequential-action journal reflection.
+- [PR #58](https://github.com/anaBalukha/Blue_Whale/pull/58):
+  Separate shared Lab 5 grounded-answer tool.
+
+My individual retrieval tool remains distinct from the
+shared grounded-answer tool, which was introduced later.
+
+### Issue #61: Test-first correction
+
+Six additional protocol regression cases reproduced a
+schema discrepancy involving trailing newline characters.
+
+Runtime validation already rejected these inputs, but
+the published schemas incorrectly accepted them under
+the tested JSON Schema validator.
+
+A seventh regression case reproduced a non-actionable
+empty-corpus error.
+
+Before correction:
+
+- 7 expected failures.
+- 13 passing existing cases.
+
+After correction:
+
+- The same selection passed all 20 tests.
+- No existing tests or runtime restrictions were weakened.
+
+The published schemas now explicitly reject line
+terminators. The empty-corpus failure tells the model
+to ask the operator to restore the trusted documents.
+
+The expected failures above are local test-first evidence,
+not a replacement for the historical red CI experiment.
+
+### Measured verification
+
+| Check | Actual result |
+|---|---|
+| Protocol and error-handling tests | 30/30 passed |
+| Individual retrieval and gate tests | 28/28 passed |
+| Misha HW2 goldens | 5/5 passed |
+| Ana HW2 goldens | 5/5 passed |
+| All tool goldens and coverage | 21/21 passed |
+| Full product regression | 185/185 passed |
+| Offline RAG goldens | 5/5 passed |
+| Python compilation | Passed |
+| Dependency consistency | Passed |
+| Git whitespace validation | Passed |
+
+Configuration: BLUE_WHALE_OFFLINE=1,
+BLUE_WHALE_MIN_SCORE=0.30, retrieval k=5.
+
+### Reproduction
+
+Run from the repository root:
+
+    BLUE_WHALE_OFFLINE=1 BLUE_WHALE_MIN_SCORE=0.30 python -m pytest -q tests
+
+The new cases are in tests/test_mcp_protocol_boundary.py
+and tests/test_misha_tool_errors.py.
+
+### Limitations
+
+The original API-key limitation describes the historical
+implementation period. This verification was performed
+offline and required no paid model requests.
+
+MCP verification uses the actual SDK client with
+in-memory transport. Live provider-specific schema
+compatibility and live model-driven tool selection
+are not established by these tests.
+
+Strict runtime integer validation is retained even
+where JSON Schema validators accept integral floats.

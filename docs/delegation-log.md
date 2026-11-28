@@ -500,3 +500,44 @@ generated file change and check nested model usage
 accounting before production deployment.
 
 Human review: pending.
+
+
+## HW2 schema edge-case correction - Issue #61
+
+Date: 2026-11-28
+
+Driver: Mikheili Kakhniashvili, Eval Keeper.
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Reproduce and correct remaining shared validation
+edge cases and improve retrieval failure instructions.
+
+What went wrong: The published regex schemas accepted
+certain trailing-newline inputs that runtime validation
+rejected. The empty-corpus error lacked a recovery step.
+
+Verification before implementation: 7 failed, 13 passed.
+
+Correction: Explicitly reject line terminators in published
+schemas without changing the existing runtime patterns.
+Provide an actionable empty-corpus failure message.
+
+Verification after implementation:
+
+- Selected regression tests: 20/20 passed.
+- Protocol and error tests: 30/30 passed.
+- All tool goldens: 20/20 passed, plus coverage.
+- Full product suite: 185/185 passed.
+- Offline RAG goldens: 5/5 passed.
+- Compilation, dependency and whitespace checks passed.
+
+Evidence: hw2/mishakakhniashvili/evidence.md.
+
+No new dependencies, CI changes, paid API calls or changes
+to other individual tools' business logic.
+
+Next time: Check published schema behavior against runtime
+validation for boundary inputs before exposing a tool.
+
+Human review: required before commit and merge.

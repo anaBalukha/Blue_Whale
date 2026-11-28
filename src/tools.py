@@ -28,7 +28,10 @@ def run_search(args: SearchArguments) -> SearchResult:
         if os.environ.get("BLUE_WHALE_OFFLINE") == "1":
             chunks = load_corpus(CORPUS)
             if not chunks:
-                raise ToolFailure("Trusted corpus is empty.")
+                raise ToolFailure(
+                    "Trusted corpus is empty. "
+                    "Ask the operator to restore the trusted documents."
+                )
             index = build(chunks)
         else:
             index = load()

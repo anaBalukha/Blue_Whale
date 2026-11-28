@@ -179,11 +179,12 @@ Live end-to-end RAG evaluation remains pending.
 
 Recorded verification on November 28, 2026:
 
-- Shared product suite: 178/178 passed.
+- Shared product suite: 185/185 passed.
 - Shared Lab 5 tool regression tests: 17/17 passed.
 - Tool golden cases: 20/20 passed, plus one coverage test.
 - Citation regression tests: 15/15 passed.
-- MCP protocol and schema tests: 16/16 passed.
+- MCP protocol, schema and error-handling tests: 30/30 passed.
+- [Latest HW2 regression evidence](hw2/mishakakhniashvili/evidence.md)
 - Offline RAG goldens: 5/5 passed.
 - Offline HTTP streaming transport verification: passed.
 
