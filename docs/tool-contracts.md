@@ -149,7 +149,7 @@ The tool must work through normal function calling and the existing MCP server.
 
 ## answer_from_trusted_sources
 
-Status: Proposed Lab 5 shared team tool.
+Status: Implemented and offline-tested. External host and live model verification pending.
 
 This tool is separate from the three individual HW2 tools.
 

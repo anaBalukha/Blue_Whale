@@ -437,3 +437,66 @@ Next time: Verify the Python executable and dependency
 imports before starting clean-tree regression tests.
 
 Human review: pending.
+
+## Shared Lab 5 grounded-answer tool - Issue #57
+
+Date: 2026-11-28
+
+Driver: Ana Balukhashvili, Repo Keeper.
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Implement a separate shared Lab 5 tool by wrapping
+the existing grounded answer function.
+
+Context: Lab 5 instructions, docs/tool-contracts.md,
+AGENTS.md, existing answer pipeline, function-calling
+registry and MCP server.
+
+Plan: Define and commit the contract first, write tests,
+observe the red phase, implement the tool, then rerun
+the same tests and the complete regression suite.
+
+Contract commit: 101bd29.
+
+What came back wrong: The initial implementation script
+introduced an unnecessary blank line at the end of
+src/contracts.py.
+
+Caught by: git diff --check.
+
+Correction: Remove the trailing blank line without
+changing the implementation or weakening tests.
+
+Verification:
+
+- Test-first red phase: 17 expected failures.
+- Green phase: 17/17 passed.
+- Shared team tool goldens: 5/5 passed.
+- All tool goldens: 20/20 passed.
+- Golden coverage test: passed.
+- Full product regression: 178/178 passed.
+- Offline RAG regression: 5/5 passed.
+
+Evidence: docs/lab5-team-tool-evidence.md.
+
+Decision: Retain the existing validation and audit gate,
+reuse the grounded answer pipeline and register a fourth
+read-only tool.
+
+No new dependencies, CI configuration changes or
+modifications to individual HW2 tools.
+
+No paid model calls were made.
+
+AGENTS.md: Existing tool safety rules were retained.
+
+Limitations: External host and live model verification
+remain pending. The nested model call may add cost.
+Citation checks do not prove semantic entailment.
+
+Next time: Verify whitespace immediately after each
+generated file change and check nested model usage
+accounting before production deployment.
+
+Human review: pending.

@@ -11,7 +11,7 @@ suggestions contradict previously confirmed decisions.
 - Lab 3 multimodal extraction and confidence routing.
 - Strict tool contracts and shared execution gates.
 - Bounded tool-calling loop with a maximum of three model rounds.
-- Three read-only tools exposed through MCP and function calling.
+- Four read-only tools exposed through MCP and function calling.
 - Local HTTP interface and SSE streaming.
 - Usage, latency, cost and tool audit logging.
 
@@ -35,8 +35,9 @@ Blue Whale remains terminal-first.
 | search_trusted_sources | Retrieve evidence from trusted documents |
 | check_decision_drift | Compare previous and proposed decisions |
 | preview_checkpoint_update | Preview a versioned checkpoint change |
+| answer_from_trusted_sources | Generate a grounded answer with citations or refuse |
 
-All three tools use the shared validation and audit gate.
+All four tools use the shared validation and audit gate.
 A tool result is evidence or a proposal, not authorization
 to modify trusted conversation state.
 
@@ -127,7 +128,7 @@ python -m src.drift_core '{"state":{"database":"PostgreSQL"},"candidate":{"datab
 BLUE_WHALE_OFFLINE=1 python -m src.mcp_server
 ~~~
 
-An MCP-compatible host can discover the three registered
+An MCP-compatible host can discover the four registered
 read-only tools.
 
 ### Local HTTP and SSE interface
@@ -178,7 +179,9 @@ Live end-to-end RAG evaluation remains pending.
 
 Recorded verification on November 28, 2026:
 
-- Shared product suite: 155/155 passed.
+- Shared product suite: 178/178 passed.
+- Shared Lab 5 tool regression tests: 17/17 passed.
+- Tool golden cases: 20/20 passed, plus one coverage test.
 - Citation regression tests: 15/15 passed.
 - MCP protocol and schema tests: 16/16 passed.
 - Offline RAG goldens: 5/5 passed.
@@ -196,6 +199,25 @@ Ten earlier real OpenRouter chat-only calls were recorded.
 
 Those calls did not establish live end-to-end RAG,
 tool-calling or streaming quality.
+
+### Shared Lab 5 team tool
+
+The answer_from_trusted_sources tool wraps the existing
+grounded answer pipeline. It is separate from the three
+individual HW2 tools.
+
+- [Team tool contract](docs/tool-contracts.md)
+- [Implementation](src/team_answer_tool.py)
+- [Regression tests](tests/test_team_answer_tool.py)
+- [Golden cases](evals/tools/lab5-team.yaml)
+- [Verification evidence](docs/lab5-team-tool-evidence.md)
+
+Offline verification passed. External MCP host and live
+model-driven verification of this new tool remain pending.
+
+The tool may perform an additional model generation call
+in live mode. Citation checks validate citation structure
+and references, not semantic entailment.
 
 ### Structured drift detection
 
