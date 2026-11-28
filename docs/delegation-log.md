@@ -297,3 +297,45 @@ Next time: Verify streaming over an actual HTTP connection
 in addition to using an in-process HTTP test client.
 
 Human review: pending.
+
+## Citation validation correction - Issue #46
+
+Date: 2026-11-28
+
+Owner: Mikheili Kakhniashvili, Eval Keeper.
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Reproduce and repair citation validation defects
+identified during the independent repository audit.
+
+Context: Lab 4 grounding requirements and the existing
+retrieval pipeline, citation checker and offline generator.
+
+What went wrong: Uncited sentences could pass validation
+because the original sentence splitter was too restrictive.
+The first correction also accepted citation-only answers
+and missed some unspaced sentence boundaries.
+
+Correction: Introduce conservative sentence parsing,
+require citations at sentence ends and reject citation-only
+answers. Update the offline generator accordingly.
+
+Verification: Two rounds of regression testing reproduced
+four failures each. After correction, all 15 citation
+tests and all 139 project tests passed.
+
+All seven Misha HW1 tests and all five offline RAG golden
+cases also passed.
+
+Evidence: docs/citation-validation-evidence.md and
+evals/results/2026-11-28-0401-offline-k5.json.
+
+Limitations: Citation placement is verified, not semantic
+support. No live model requests were made.
+
+Next time: Test citation association using lowercase
+sentences, newline boundaries and malformed formatting
+before accepting the implementation.
+
+Human review: pending.

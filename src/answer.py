@@ -18,6 +18,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
+from .citation_text import sentence_units, has_end_citation
 from .index import Index
 from .llm import complete_json, embed_model_name
 from .retrieve import Hit, hybrid
@@ -77,10 +78,14 @@ def check_citations(reply: Reply, n_sources: int) -> str | None:
         return f"cites sources that were never retrieved: {sorted(unknown)}"
     if markers != set(reply.citations):
         return "citation list and [n] markers disagree"
-    sentences = [s for s in re.split(r"(?<=[.!?])\s+(?=[A-Z])", reply.answer.strip()) if s]
-    uncited = [s for s in sentences if not re.search(r"\[\d+\]", s)]
-    if uncited:
-        return f"uncited sentence: {uncited[0][:60]!r}"
+    sentences = list(sentence_units(reply.answer))
+
+    if not sentences:
+        return "answer has no sentences"
+
+    if any(not has_end_citation(s) for s in sentences):
+        return "uncited sentence: cite each sentence using a retrieved source"
+
     return None
 
 

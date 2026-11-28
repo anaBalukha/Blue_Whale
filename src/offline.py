@@ -21,6 +21,8 @@ from types import SimpleNamespace
 
 import numpy as np
 
+from .citation_text import sentence_units
+
 MODEL = "offline/trigram-hash"
 DIMS = 512
 
@@ -97,8 +99,9 @@ def complete_json(prompt: str) -> tuple[dict, SimpleNamespace]:
             seen_documents.add(document_title)
 
             parts.extend(
-                f"{sentence.rstrip('.')} [{n}]."
+                f"{unit.rstrip('.!?')} [{n}]."
                 for sentence in selected
+                for unit in sentence_units(sentence)
             )
 
             if len(cited) == 3:
