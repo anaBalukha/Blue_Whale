@@ -339,3 +339,49 @@ sentences, newline boundaries and malformed formatting
 before accepting the implementation.
 
 Human review: pending.
+
+## MCP protocol boundary correction - Issue #48
+
+Date: 2026-11-28
+
+Contributor: Mikheili Kakhniashvili
+
+Delegated to: ChatGPT, Autonomy Ladder rung 3.
+
+Task: Correct MCP validation bypass, unsafe validation
+errors, missing audit records and shared schema mismatch.
+
+Context: Lab 5 tool contracts, HW2 and the independent
+repository audit.
+
+What went wrong: SDK argument validation could reject
+requests before the shared application gate executed.
+Published schemas did not fully describe runtime rules.
+
+Correction: Route MCP execution through the shared strict
+gate and publish the same input schema through both
+interfaces. Add the missing decision-key schema restriction.
+
+Verification: The initial diagnostic checked 13 requests
+and reproduced defects in ten cases.
+
+The regression suite initially produced 13 failures
+and three passes.
+
+After correction, all 16 new protocol tests, all 16
+existing MCP tests and all 155 project tests passed.
+
+All five offline RAG golden cases also passed.
+
+Evidence: docs/mcp-boundary-evidence.md,
+tests/test_mcp_protocol_boundary.py and
+evals/results/2026-11-28-0419-offline-k5.json.
+
+Limitations: In-memory MCP transport verification.
+No live model requests were made.
+
+Next time: Verify the actual protocol boundary,
+sanitized errors, audit count and complete published
+schemas instead of checking rejection alone.
+
+Human review: pending.
