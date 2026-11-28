@@ -432,3 +432,81 @@ Exact historical pytest summary:
 These historical results are distinct from the later
 185-test regression suite and the current five-case
 execution evidence.
+
+## Final contract and external MCP verification
+
+Date: 2026-11-28.
+
+Tested commit: `a257bbc9aee45dc93e47c3c65c1c726ff657ba2f`.
+
+### Exact validation messages
+
+The shared offline verification exercised eight invalid requests through call_tool() and the actual MCP SDK client. Every request was rejected, and the returned error strings matched exactly.
+
+The shared verification was executed in Misha's clone of the same repository at the recorded commit.
+
+| Case | Exact arguments | Actual error | Both doors |
+|---|---|---|---|
+| missing_state | `{"candidate":{"database":"MongoDB"}}` | `invalid arguments: state: Provide this required argument` | Pass |
+| missing_candidate | `{"state":{"database":"PostgreSQL"}}` | `invalid arguments: candidate: Provide this required argument` | Pass |
+| invalid_pattern | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"MongoDB!!!"}}` | `invalid arguments: candidate.unexpected_argument: Use only permitted characters` | Pass |
+| empty_value | `{"state":{"database":"PostgreSQL"},"candidate":{"database":""}}` | `invalid arguments: candidate.unexpected_argument: Text is too short` | Pass |
+| too_long | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}}` | `invalid arguments: candidate.unexpected_argument: Text is too long` | Pass |
+| empty_map | `{"state":{},"candidate":{"database":"MongoDB"}}` | `invalid arguments: state: Use a value that satisfies the tool contract` | Pass |
+| wrong_type | `{"state":{"database":"PostgreSQL"},"candidate":{"database":123}}` | `invalid arguments: candidate.unexpected_argument: Provide a string` | Pass |
+| forged_override | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"MongoDB"},"user_changes":{"database":"MongoDB"}}` | `invalid arguments: unexpected_argument: Remove this unexpected argument` | Pass |
+
+All eight invalid-input cases passed.
+
+The MCP and function-calling input schemas also matched exactly in this verification.
+
+### External MCP host demonstration
+
+Host: VS Code Agent Chat.
+
+Workspace: Blue_Whale_Ana.
+
+MCP server shown by the host: blue-whale-lab5.
+
+The natural-language prompt was:
+
+> Use the Blue Whale MCP tool check_decision_drift. The previous database decision is PostgreSQL and the proposed database is MongoDB. Show the tool call, status, effective state and conflicts.
+
+The host displayed an actual execution of check_decision_drift with these arguments:
+
+```json
+{
+  "state": {
+    "database": "PostgreSQL"
+  },
+  "candidate": {
+    "database": "MongoDB"
+  }
+}
+```
+
+Observed functional result, transcribed from the host display:
+
+```json
+{
+  "status": "drift",
+  "effective_state": {
+    "database": "PostgreSQL"
+  },
+  "conflicts": [
+    {
+      "field": "database",
+      "expected": "PostgreSQL",
+      "proposed": "MongoDB"
+    }
+  ]
+}
+```
+
+The displayed tool-call sequence contained one check_decision_drift invocation.
+
+The demonstration confirms external MCP host integration. It does not establish live OpenRouter integration or persistent state management.
+
+Earlier external host evidence is also available in [streaming-evidence.md](../../docs/streaming-evidence.md).
+
+The original historical CI evidence is retained. No missing merge-button wording has been reconstructed.

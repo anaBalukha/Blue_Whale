@@ -6,7 +6,11 @@
 
 **Product PR:** [#28](https://github.com/anaBalukha/Blue_Whale/pull/28) · Merge SHA: `63e59a9`.
 
-**Model description:** Compare supplied prior and proposed project decisions without modifying either.
+**Function-calling description:** Compare supplied prior and proposed project decisions without modifying either.
+
+**MCP description:** Compare supplied previous project decisions with proposed decisions, without changing either.
+
+**Contract class docstring:** Compare prior and proposed decisions; never modify either.
 
 | Property | Contract |
 |---|---|
@@ -15,7 +19,7 @@
 | Idempotent | Second identical call returned `{"status":"drift","effective_state":{"database":"PostgreSQL"},"conflicts":[{"field":"database","expected":"PostgreSQL","proposed":"MongoDB"}]}`; same functional result |
 | Offered to | Visitors and signed-in users; `tools_for()` permits read-only tools ([rule](../../src/tools.py#L106-L111)) |
 | Identity | Not required; application supplies caller context, MCP passes None; never an argument |
-| Touches | `src/drift_core.py`; audit log |
+| Touches | In-memory decision dictionaries through `src/drift_core.py`; `logs/tools.jsonl` (configurable audit path). No database or persistent checkpoint access. |
 | Must never | Change trusted state or fabricate user approval |
 
 **Inputs:** `DriftArguments`, `extra="forbid"`.
@@ -35,16 +39,23 @@ Line terminators are forbidden. No numeric, identity or override arguments.
 
 **Expected failures:**
 
-| Condition | Message or message fragment |
+| Condition | Exact observed message |
 |---|---|
-| Missing argument | Provide this required argument |
-| Invalid pattern | Use only permitted characters |
-| Invalid length | Text is too short / Text is too long |
-| Invalid map | Use a value that satisfies the tool contract |
-| Unexpected argument | Remove this unexpected argument |
+| Missing state | `invalid arguments: state: Provide this required argument` |
+| Missing candidate | `invalid arguments: candidate: Provide this required argument` |
+| Invalid pattern | `invalid arguments: candidate.unexpected_argument: Use only permitted characters` |
+| Empty value | `invalid arguments: candidate.unexpected_argument: Text is too short` |
+| Too long | `invalid arguments: candidate.unexpected_argument: Text is too long` |
+| Empty map | `invalid arguments: state: Use a value that satisfies the tool contract` |
+| Wrong type | `invalid arguments: candidate.unexpected_argument: Provide a string` |
+| Forged override | `invalid arguments: unexpected_argument: Remove this unexpected argument` |
 | Tool not offered | Tool not available. Choose an offered tool. |
 | Execution failure | Tool execution failed unexpectedly. Ask the operator to check the service, then retry. |
 | Audit failure | Audit logging unavailable. Ask the operator to restore logging and retry. |
+
+Validation messages above were reproduced through both interfaces on November 28, 2026. Other failure messages are copied from the shared executor.
+
+See [execution evidence](evidence.md) for details.
 
 **Tests:**
 
