@@ -1,6 +1,6 @@
 # Pattern Journal · lexokodavs · Weeks 5 to 7
 
-*One entry per week: the pattern, one place I used it, one thing I would do differently. All three entries were written on 2026-11-24; Weeks 5 and 6 are written after the fact, from work and tests in my HW2 product PR #35.*
+*One entry per week: the pattern, one place I used it, one thing I would do differently. All three entries were written on 2026-11-24; Weeks 5 and 6 are written after the fact, from work and tests in my HW2 product PR #35 (reconciled on `b413f87` on 2026-11-28).*
 
 ## Week 5 · Tool Contract (written 2026-11-24)
 

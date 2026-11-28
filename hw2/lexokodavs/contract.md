@@ -1,9 +1,9 @@
 # Tool contract · Blue Whale · `preview_checkpoint_update` · lexokodavs
 
 *From `Lab-5/templates/tool-contract.md`. Every rule below exists in code:
-[`src/lexo_checkpoint_tool.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/lexo_checkpoint_tool.py) (contract and body),
-[`src/tools.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/tools.py) (registry),
-[`src/mcp_server.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/mcp_server.py) (MCP door),
+[`src/lexo_checkpoint_tool.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/lexo_checkpoint_tool.py) (`PreviewCheckpointUpdateArgs` at line 33, `run_preview_checkpoint_update` at line 58),
+[`src/tools.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/tools.py) (`preview_checkpoint_update` registration at line 83, `writes=False` at line 101, `tools_for` at line 106),
+[`src/mcp_server.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/mcp_server.py) (`call_tool` at line 21, `preview_checkpoint_update` at lines 170 and 191),
 [`src/contracts.py`](https://github.com/anaBalukha/Blue_Whale/blob/main/src/contracts.py) (shared `DecisionMap`).
 Product PR: [#35](https://github.com/anaBalukha/Blue_Whale/pull/35).*
 
@@ -23,7 +23,7 @@ Product PR: [#35](https://github.com/anaBalukha/Blue_Whale/pull/35).*
 | **Touches** | only its own arguments in memory, plus one line in `logs/tools.jsonl` written by the shared gate |
 | **Must never** | turn a proposal into a confirmed user decision: it never writes trusted state and never accepts an approval flag such as `authorized=true` |
 
-**Inputs.** Contract class `PreviewCheckpointUpdateArgs`, `extra="forbid"`.
+**Inputs.** Contract class `PreviewCheckpointUpdateArgs` (`src/lexo_checkpoint_tool.py`, line 33), `extra="forbid"`.
 
 | Argument | Type | Constraint | Description the model reads |
 |---|---|---|---|
