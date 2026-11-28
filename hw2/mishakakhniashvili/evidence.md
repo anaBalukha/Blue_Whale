@@ -197,3 +197,435 @@ golden cases remained green.
 
 - [PR #62](https://github.com/anaBalukha/Blue_Whale/pull/62)
 - [Successful CI](https://github.com/anaBalukha/Blue_Whale/actions/runs/46095902952)
+
+## Lab 8 template: concrete execution evidence
+
+Execution date: 2026-11-28.
+Tested commit: `219d9058e6f90930e0ce63314e8a8dcdb63bede0`.
+
+**Cases:** `evals/tools/mishakakhniashvili.yaml`, executed by `tests/test_tool_golden.py` in CI job `test`.
+
+All calls use caller=null (visitor). The YAML arguments are represented below as JSON.
+
+| ID | Type | Actual arguments | Expected | Actual outcome | Pass? |
+|---|---|---|---|---|---|
+| n1 | normal | `{"question":"Which interface is planned for Blue Whale MVP?","limit":3}` | `{"expect":"ok","must_include_document":"project/terminal-first"}` | `{"ok":true,"count":3,"documents":["project/terminal-first","project/blue-whale-spec","project/terminal-first"]}` | Pass |
+| n2 | normal | `{"question":"What is the target drift detection accuracy?","limit":3}` | `{"expect":"ok","must_include_document":"project/blue-whale-spec"}` | `{"ok":true,"count":3,"documents":["project/blue-whale-spec","project/terminal-first","project/blue-whale-spec"]}` | Pass |
+| n3 | normal | `{"question":"Does an explicit user change count as drift?","limit":3}` | `{"expect":"ok","must_include_document":"project/explicit-user-changes"}` | `{"ok":true,"count":3,"documents":["project/explicit-user-changes","project/blue-whale-spec","project/explicit-user-changes"]}` | Pass |
+| b1 | bad-input | `{"question":"Which interface is planned for Blue Whale MVP?","limit":100}` | `{"expect":"refused","error_has":["invalid arguments","limit"]}` | `{"ok":false,"result":null,"error":"invalid arguments: limit: Value is above the allowed maximum"}` | Pass |
+| a1 | adversarial | `{"question":"Which interface is planned for Blue Whale MVP?","caller_id":"another-user"}` | `{"expect":"refused","error_has":["invalid arguments","caller_id"]}` | `{"ok":false,"result":null,"error":"invalid arguments: caller_id: Remove this unexpected argument"}` | Pass |
+
+**Adversarial intent:** Inject another caller's identity through caller_id to bypass the application's trusted caller context.
+
+### Complete actual golden results
+
+The table above summarizes the observed results. The following is the complete captured output, including all excerpts, scores and exact refusal messages.
+
+    [
+      {
+        "case": {
+          "id": "n1",
+          "type": "normal",
+          "why": "Finds the approved MVP interface decision.",
+          "tool": "search_trusted_sources",
+          "caller": null,
+          "arguments": {
+            "question": "Which interface is planned for Blue Whale MVP?",
+            "limit": 3
+          },
+          "expect": "ok",
+          "must_include_document": "project/terminal-first"
+        },
+        "actual": {
+          "ok": true,
+          "result": {
+            "count": 3,
+            "sources": [
+              {
+                "chunk_id": "project/terminal-first#2",
+                "document_id": "project/terminal-first",
+                "title": "Decision 001 - Terminal-first MVP",
+                "section": "Context",
+                "excerpt": "Blue Whale needs a simple interface to test conversation drift detection and recovery.",
+                "score": 0.4747
+              },
+              {
+                "chunk_id": "project/blue-whale-spec#10",
+                "document_id": "project/blue-whale-spec",
+                "title": "Spec v0 · Blue Whale",
+                "section": "Lab 1 AI critique decisions",
+                "excerpt": "- Interface: A terminal application for the MVP. A web interface is deferred.\n- State: Automatically track conversation state in memory. Explicit user changes override older decisions.\n- Recovery: Regenerate once after detecting drift. If recovery fails, warn the user and request clarification.",
+                "score": 0.4324
+              },
+              {
+                "chunk_id": "project/terminal-first#5",
+                "document_id": "project/terminal-first",
+                "title": "Decision 001 - Terminal-first MVP",
+                "section": "Consequences",
+                "excerpt": "The MVP will use command-line interaction. A web interface is deferred.",
+                "score": 0.4479
+              }
+            ]
+          },
+          "error": null
+        },
+        "passed": true
+      },
+      {
+        "case": {
+          "id": "n2",
+          "type": "normal",
+          "why": "Retrieves the numeric drift accuracy target.",
+          "tool": "search_trusted_sources",
+          "caller": null,
+          "arguments": {
+            "question": "What is the target drift detection accuracy?",
+            "limit": 3
+          },
+          "expect": "ok",
+          "must_include_document": "project/blue-whale-spec"
+        },
+        "actual": {
+          "ok": true,
+          "result": {
+            "count": 3,
+            "sources": [
+              {
+                "chunk_id": "project/blue-whale-spec#3",
+                "document_id": "project/blue-whale-spec",
+                "title": "Spec v0 · Blue Whale",
+                "section": "Success criteria",
+                "excerpt": "1. **Drift detection accuracy:** correctly classify at least 85% of cases in a labeled benchmark of at least 50 conversation examples containing both drift and non-drift cases.\n2. **Recovery success:** in at least 80% of confirmed drift cases, the corrected response follows the latest valid user requirements and expected conversation state.\n3. **Po",
+                "score": 0.4363
+              },
+              {
+                "chunk_id": "project/terminal-first#2",
+                "document_id": "project/terminal-first",
+                "title": "Decision 001 - Terminal-first MVP",
+                "section": "Context",
+                "excerpt": "Blue Whale needs a simple interface to test conversation drift detection and recovery.",
+                "score": 0.4152
+              },
+              {
+                "chunk_id": "project/blue-whale-spec#11",
+                "document_id": "project/blue-whale-spec",
+                "title": "Spec v0 · Blue Whale",
+                "section": "Success criteria verification",
+                "excerpt": "- Detection: At least 85% accuracy on 50 or more labeled cases, including drift, no drift, and intentional changes.\n- Recovery: At least 80% of confirmed drift cases must produce responses consistent with the latest trusted state.\n- Consistency: At least 90% of successful recoveries must remain consistent in the next response.",
+                "score": 0.3882
+              }
+            ]
+          },
+          "error": null
+        },
+        "passed": true
+      },
+      {
+        "case": {
+          "id": "n3",
+          "type": "normal",
+          "why": "Retrieves the explicit-user-override decision.",
+          "tool": "search_trusted_sources",
+          "caller": null,
+          "arguments": {
+            "question": "Does an explicit user change count as drift?",
+            "limit": 3
+          },
+          "expect": "ok",
+          "must_include_document": "project/explicit-user-changes"
+        },
+        "actual": {
+          "ok": true,
+          "result": {
+            "count": 3,
+            "sources": [
+              {
+                "chunk_id": "project/explicit-user-changes#3",
+                "document_id": "project/explicit-user-changes",
+                "title": "Decision 002 - Explicit User Changes Take Priority",
+                "section": "Decision",
+                "excerpt": "An explicit user-approved change supersedes the corresponding earlier decision.\nChanges introduced only by the AI are treated as potential conversation drift.\nAmbiguous changes require user confirmation.",
+                "score": 0.5438
+              },
+              {
+                "chunk_id": "project/blue-whale-spec#6",
+                "document_id": "project/blue-whale-spec",
+                "title": "Spec v0 · Blue Whale",
+                "section": "Acceptance criteria",
+                "excerpt": "1. **State tracking:** after a user message, the system produces or updates a structured state containing the main task, current goal, requirements, technology choices, decisions, completed work, and next step. An explicit user change replaces the conflicting older value.\n\n2. **Drift detection:** given a conversation where PostgreSQL is an establis",
+                "score": 0.373
+              },
+              {
+                "chunk_id": "project/explicit-user-changes#2",
+                "document_id": "project/explicit-user-changes",
+                "title": "Decision 002 - Explicit User Changes Take Priority",
+                "section": "Context",
+                "excerpt": "Blue Whale must detect when an AI contradicts previously established requirements.\nHowever, users must remain free to intentionally change those requirements.",
+                "score": 0.3759
+              }
+            ]
+          },
+          "error": null
+        },
+        "passed": true
+      },
+      {
+        "case": {
+          "id": "b1",
+          "type": "bad-input",
+          "why": "Rejects limits outside the accepted range.",
+          "tool": "search_trusted_sources",
+          "caller": null,
+          "arguments": {
+            "question": "Which interface is planned for Blue Whale MVP?",
+            "limit": 100
+          },
+          "expect": "refused",
+          "error_has": [
+            "invalid arguments",
+            "limit"
+          ]
+        },
+        "actual": {
+          "ok": false,
+          "result": null,
+          "error": "invalid arguments: limit: Value is above the allowed maximum"
+        },
+        "passed": true
+      },
+      {
+        "case": {
+          "id": "a1",
+          "type": "adversarial",
+          "why": "Prevents a model from injecting caller identity.",
+          "tool": "search_trusted_sources",
+          "caller": null,
+          "arguments": {
+            "question": "Which interface is planned for Blue Whale MVP?",
+            "caller_id": "another-user"
+          },
+          "expect": "refused",
+          "error_has": [
+            "invalid arguments",
+            "caller_id"
+          ]
+        },
+        "actual": {
+          "ok": false,
+          "result": null,
+          "error": "invalid arguments: caller_id: Remove this unexpected argument"
+        },
+        "passed": true
+      }
+    ]
+
+### Repeated identical call
+
+Actual arguments and both complete functional results:
+
+    {
+      "arguments": {
+        "question": "Which interface is planned for Blue Whale MVP?",
+        "limit": 3
+      },
+      "first": {
+        "ok": true,
+        "result": {
+          "count": 3,
+          "sources": [
+            {
+              "chunk_id": "project/terminal-first#2",
+              "document_id": "project/terminal-first",
+              "title": "Decision 001 - Terminal-first MVP",
+              "section": "Context",
+              "excerpt": "Blue Whale needs a simple interface to test conversation drift detection and recovery.",
+              "score": 0.4747
+            },
+            {
+              "chunk_id": "project/blue-whale-spec#10",
+              "document_id": "project/blue-whale-spec",
+              "title": "Spec v0 · Blue Whale",
+              "section": "Lab 1 AI critique decisions",
+              "excerpt": "- Interface: A terminal application for the MVP. A web interface is deferred.\n- State: Automatically track conversation state in memory. Explicit user changes override older decisions.\n- Recovery: Regenerate once after detecting drift. If recovery fails, warn the user and request clarification.",
+              "score": 0.4324
+            },
+            {
+              "chunk_id": "project/terminal-first#5",
+              "document_id": "project/terminal-first",
+              "title": "Decision 001 - Terminal-first MVP",
+              "section": "Consequences",
+              "excerpt": "The MVP will use command-line interaction. A web interface is deferred.",
+              "score": 0.4479
+            }
+          ]
+        },
+        "error": null
+      },
+      "second": {
+        "ok": true,
+        "result": {
+          "count": 3,
+          "sources": [
+            {
+              "chunk_id": "project/terminal-first#2",
+              "document_id": "project/terminal-first",
+              "title": "Decision 001 - Terminal-first MVP",
+              "section": "Context",
+              "excerpt": "Blue Whale needs a simple interface to test conversation drift detection and recovery.",
+              "score": 0.4747
+            },
+            {
+              "chunk_id": "project/blue-whale-spec#10",
+              "document_id": "project/blue-whale-spec",
+              "title": "Spec v0 · Blue Whale",
+              "section": "Lab 1 AI critique decisions",
+              "excerpt": "- Interface: A terminal application for the MVP. A web interface is deferred.\n- State: Automatically track conversation state in memory. Explicit user changes override older decisions.\n- Recovery: Regenerate once after detecting drift. If recovery fails, warn the user and request clarification.",
+              "score": 0.4324
+            },
+            {
+              "chunk_id": "project/terminal-first#5",
+              "document_id": "project/terminal-first",
+              "title": "Decision 001 - Terminal-first MVP",
+              "section": "Consequences",
+              "excerpt": "The MVP will use command-line interaction. A web interface is deferred.",
+              "score": 0.4479
+            }
+          ]
+        },
+        "error": null
+      },
+      "equal": true
+    }
+
+The comparison excludes timestamps and execution latency. Both calls returned identical retrieval results. Audit records may differ, but project decisions are unchanged.
+
+### Through the MCP door
+
+Client: Python MCP SDK 2.3.0, using Client(mcp) with in-memory transport.
+
+Requests were issued programmatically. No natural-language model prompt or model-selected tool sequence is claimed.
+
+Actual discovery, valid retrieval and adversarial request:
+
+    [
+      {
+        "method": "list_tools",
+        "result": [
+          "search_trusted_sources",
+          "check_decision_drift",
+          "preview_checkpoint_update",
+          "answer_from_trusted_sources"
+        ]
+      },
+      {
+        "method": "call_tool",
+        "tool": "search_trusted_sources",
+        "arguments": {
+          "question": "Which interface is planned for Blue Whale MVP?",
+          "limit": 3
+        },
+        "is_error": false,
+        "structured_content": {
+          "count": 3,
+          "sources": [
+            {
+              "chunk_id": "project/terminal-first#2",
+              "document_id": "project/terminal-first",
+              "title": "Decision 001 - Terminal-first MVP",
+              "section": "Context",
+              "excerpt": "Blue Whale needs a simple interface to test conversation drift detection and recovery.",
+              "score": 0.4747
+            },
+            {
+              "chunk_id": "project/blue-whale-spec#10",
+              "document_id": "project/blue-whale-spec",
+              "title": "Spec v0 · Blue Whale",
+              "section": "Lab 1 AI critique decisions",
+              "excerpt": "- Interface: A terminal application for the MVP. A web interface is deferred.\n- State: Automatically track conversation state in memory. Explicit user changes override older decisions.\n- Recovery: Regenerate once after detecting drift. If recovery fails, warn the user and request clarification.",
+              "score": 0.4324
+            },
+            {
+              "chunk_id": "project/terminal-first#5",
+              "document_id": "project/terminal-first",
+              "title": "Decision 001 - Terminal-first MVP",
+              "section": "Consequences",
+              "excerpt": "The MVP will use command-line interaction. A web interface is deferred.",
+              "score": 0.4479
+            }
+          ]
+        },
+        "text": [
+          "{\"count\": 3, \"sources\": [{\"chunk_id\": \"project/terminal-first#2\", \"document_id\": \"project/terminal-first\", \"title\": \"Decision 001 - Terminal-first MVP\", \"section\": \"Context\", \"excerpt\": \"Blue Whale needs a simple interface to test conversation drift detection and recovery.\", \"score\": 0.4747}, {\"chunk_id\": \"project/blue-whale-spec#10\", \"document_id\": \"project/blue-whale-spec\", \"title\": \"Spec v0 · Blue Whale\", \"section\": \"Lab 1 AI critique decisions\", \"excerpt\": \"- Interface: A terminal application for the MVP. A web interface is deferred.\\n- State: Automatically track conversation state in memory. Explicit user changes override older decisions.\\n- Recovery: Regenerate once after detecting drift. If recovery fails, warn the user and request clarification.\", \"score\": 0.4324}, {\"chunk_id\": \"project/terminal-first#5\", \"document_id\": \"project/terminal-first\", \"title\": \"Decision 001 - Terminal-first MVP\", \"section\": \"Consequences\", \"excerpt\": \"The MVP will use command-line interaction. A web interface is deferred.\", \"score\": 0.4479}]}"
+        ]
+      },
+      {
+        "method": "call_tool",
+        "tool": "search_trusted_sources",
+        "arguments": {
+          "question": "Which interface is planned for Blue Whale MVP?",
+          "caller_id": "another-user"
+        },
+        "is_error": true,
+        "structured_content": null,
+        "text": [
+          "invalid arguments: caller_id: Remove this unexpected argument"
+        ]
+      }
+    ]
+
+### Exact historical CI evidence
+
+**Red run**
+
+- Branch: `hw2-misha-red-proof`
+- PR: [#21](https://github.com/anaBalukha/Blue_Whale/pull/21), closed without merging.
+- Temporary branch: deleted.
+- [Failed CI run](https://github.com/anaBalukha/Blue_Whale/actions/runs/42428950594)
+- CI job: `test`
+
+Deliberate weakening of the SearchArguments contract:
+
+    - model_config = ConfigDict(extra="forbid")
+    + model_config = ConfigDict(extra="ignore")
+
+Exact failed test names from the historical CI log:
+
+    FAILED tests/test_misha_mcp.py::test_mcp_contract_rejects_unknown_fields
+    FAILED tests/test_misha_retrieval_tool.py::test_unknown_arguments_are_forbidden
+    FAILED tests/test_tool_gates.py::test_identity_spoofing_refused
+    FAILED tests/test_tool_golden.py::test_tool_golden_case[mishakakhniashvili-case4]
+    4 failed, 36 passed in 1.35s
+
+The original verification evidence records the required
+ci / test check failing and GitHub displaying:
+
+    Merging is blocked
+
+The wording is retained from the original evidence,
+rather than reconstructed from the CI log.
+
+**What the red run taught me**
+
+Changing extra="forbid" to extra="ignore" allowed
+unexpected arguments to be silently discarded.
+The direct validation, MCP, execution-gate and adversarial
+golden tests all detected that change. A bounded search
+limit and restricted question pattern do not prevent
+identity injection if unexpected fields are accepted.
+Strict rejection of additional fields is therefore
+a separate necessary contract restriction.
+
+**Green run**
+
+- Product PR: [#20](https://github.com/anaBalukha/Blue_Whale/pull/20)
+- Product merge commit: `0aca4b1ba752ad7faa9bd049133aca3e5861974d`
+- [Successful CI run](https://github.com/anaBalukha/Blue_Whale/actions/runs/42426609593)
+- CI job: `test`
+
+Exact historical pytest summary:
+
+    40 passed in 0.94s
+
+These historical results are distinct from the subsequent
+185-test regression suite and the current five-case
+execution evidence.
