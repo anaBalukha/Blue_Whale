@@ -2,6 +2,8 @@
 
 ## Week 5 — Tool Contract
 
+**Implementation references:** [SearchArguments](../../src/contracts.py#L38), [retrieval tool](../../src/misha_retrieval_tool.py), [retrieval tests](../../tests/test_misha_retrieval_tool.py), [product PR #20](https://github.com/anaBalukha/Blue_Whale/pull/20).
+
 *Retrospective entry, written November 8, 2026.*
 
 I reviewed the Tool Contract pattern and applied it while developing Blue Whale's `search_trusted_sources` tool. I used Pydantic with `extra="forbid"` to reject unexpected arguments and restricted the search limit to 1–5. The tool is read-only and does not accept user identity from the model.
@@ -9,6 +11,8 @@ I reviewed the Tool Contract pattern and applied it while developing Blue Whale'
 One thing I would do differently is test invalid and adversarial arguments earlier, especially through the MCP interface rather than only testing the Python function.
 
 ## Week 6 — Session State
+
+**Experiment references:** [bounded tool loop](../../src/act.py), [verification evidence](evidence.md). No persistent cross-call memory, retention period or deletion mechanism is implemented.
 
 *Retrospective entry, written November 8, 2026.*
 
@@ -31,6 +35,8 @@ retention period, explicit write conditions, and deletion
 mechanism before implementing session storage.
 
 ## Week 7 — Supervised Autonomy Loop
+
+**Implementation references:** [execution gate](../../src/act.py), [MCP tests](../../tests/test_misha_mcp.py), [red CI experiment #21](https://github.com/anaBalukha/Blue_Whale/pull/21). The trusted checkpoint commit remains a proposed confirmation-required action.
 
 *Work performed November 8, 2026.*
 

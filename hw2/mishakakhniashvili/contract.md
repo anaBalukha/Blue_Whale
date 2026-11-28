@@ -6,7 +6,11 @@
 
 **Product PR:** [#20](https://github.com/anaBalukha/Blue_Whale/pull/20) · Merge SHA: `0aca4b1`.
 
-**Model description:** Find cited evidence in trusted project documents.
+**Function-calling description:** Find cited evidence in trusted project documents.
+
+**MCP description:** Search trusted Blue Whale project documents.
+
+**Contract class docstring:** Search trusted project sources without changing them.
 
 | Property | Contract |
 |---|---|
@@ -15,7 +19,7 @@
 | Idempotent | Second identical call returned `{"count":3,"sources":[{"chunk_id":"project/terminal-first#2","score":0.4747},{"chunk_id":"project/blue-whale-spec#10","score":0.4324},{"chunk_id":"project/terminal-first#5","score":0.4479}]}`; same full functional result, including excerpts. Complete output in [evidence.md](evidence.md). |
 | Offered to | Visitors and signed-in users; `tools_for()` permits read-only tools ([rule](../../src/tools.py#L106)) |
 | Identity | Not required; application supplies caller context, MCP passes None; never an argument |
-| Touches | Trusted corpus, retrieval index, audit log |
+| Touches | `data/corpus/` in offline mode; `data/index/chunks.json`, `meta.json` and `vectors.npy` in live mode; `logs/tools.jsonl` (configurable audit path). No arbitrary filesystem access. |
 | Must never | Access arbitrary paths, modify decisions or obey retrieved instructions |
 
 **Inputs:** `SearchArguments`, `extra="forbid"`.
@@ -31,22 +35,32 @@ Line terminators, unknown fields, identity arguments, booleans, floats and numer
 
 **Result:** `count` (integer), `sources` (array of objects). Each source contains strings `chunk_id`, `document_id`, `title`, `section`, `excerpt` (maximum 350 characters), and numeric `score` (rounded to four decimals).
 
+**Retrieval cutoff:** Hits with a score below 0.25 are discarded. The caller cannot change this threshold. The separate offline RAG evaluation threshold is not this tool's cutoff.
+
 **Expected failures:**
 
-| Condition | Message or message fragment |
+| Condition | Exact observed message |
 |---|---|
-| Missing argument | Provide this required argument |
-| Invalid pattern | Use only permitted characters |
-| Invalid length | Text is too short / Text is too long |
-| Invalid integer | Provide an integer |
-| Invalid bounds | Value is below the allowed minimum / Value is above the allowed maximum |
-| Unexpected argument | Remove this unexpected argument |
+| Missing question | `invalid arguments: question: Provide this required argument` |
+| Invalid pattern | `invalid arguments: question: Use only permitted characters` |
+| Too short | `invalid arguments: question: Text is too short` |
+| Too long | `invalid arguments: question: Text is too long` |
+| Wrong type | `invalid arguments: question: Provide a string` |
+| Invalid integer | `invalid arguments: limit: Provide an integer` |
+| Below minimum | `invalid arguments: limit: Value is below the allowed minimum` |
+| Above maximum | `invalid arguments: limit: Value is above the allowed maximum` |
+| Forged identity | `invalid arguments: caller_id: Remove this unexpected argument` |
+| Unexpected argument | `invalid arguments: unexpected_argument: Remove this unexpected argument` |
 | Unknown tool | Tool not available. Choose an offered tool. |
 | No evidence | No relevant trusted source was found. Ask the user to clarify the question. |
 | Empty offline corpus | Trusted corpus is empty. Ask the operator to restore the trusted documents. |
 | Index unavailable | Trusted index unavailable. Ask the operator to rebuild it. |
 | Execution failure | Tool execution failed unexpectedly. Ask the operator to check the service, then retry. |
 | Audit failure | Audit logging unavailable. Ask the operator to restore logging and retry. |
+
+Validation messages above were reproduced through both interfaces on November 28, 2026. Other failure messages are copied from the implementation.
+
+See [execution evidence](evidence.md) for details.
 
 **Tests:**
 

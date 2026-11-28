@@ -629,3 +629,71 @@ Exact historical pytest summary:
 These historical results are distinct from the subsequent
 185-test regression suite and the current five-case
 execution evidence.
+
+## Final contract and external MCP verification
+
+Date: 2026-11-28.
+
+Tested commit: `a257bbc9aee45dc93e47c3c65c1c726ff657ba2f`.
+
+### Exact validation messages
+
+Ten invalid requests were exercised through call_tool() and the actual MCP SDK client. Every request was rejected, and both interfaces returned identical error messages.
+
+| Case | Exact arguments | Actual error | Both doors |
+|---|---|---|---|
+| missing_question | `{}` | `invalid arguments: question: Provide this required argument` | Pass |
+| invalid_pattern | `{"question":"../../.env"}` | `invalid arguments: question: Use only permitted characters` | Pass |
+| too_short | `{"question":"Hi"}` | `invalid arguments: question: Text is too short` | Pass |
+| too_long | `{"question":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}` | `invalid arguments: question: Text is too long` | Pass |
+| wrong_type | `{"question":123}` | `invalid arguments: question: Provide a string` | Pass |
+| invalid_integer | `{"question":"Which interface is planned for Blue Whale MVP?","limit":"3"}` | `invalid arguments: limit: Provide an integer` | Pass |
+| below_minimum | `{"question":"Which interface is planned for Blue Whale MVP?","limit":0}` | `invalid arguments: limit: Value is below the allowed minimum` | Pass |
+| above_maximum | `{"question":"Which interface is planned for Blue Whale MVP?","limit":100}` | `invalid arguments: limit: Value is above the allowed maximum` | Pass |
+| forged_identity | `{"question":"Which interface is planned for Blue Whale MVP?","caller_id":"another-user"}` | `invalid arguments: caller_id: Remove this unexpected argument` | Pass |
+| unexpected_argument | `{"question":"Which interface is planned for Blue Whale MVP?","unexpected":true}` | `invalid arguments: unexpected_argument: Remove this unexpected argument` | Pass |
+
+All ten invalid-input cases passed.
+
+The MCP and function-calling input schemas also matched exactly in this verification.
+
+### External MCP host demonstration
+
+Host: VS Code Agent Chat.
+
+Workspace: Blue_Whale_Ana.
+
+MCP server shown by the host: blue-whale-lab5.
+
+The natural-language prompt was:
+
+> Use the Blue Whale MCP tool search_trusted_sources to find which interface is planned for the Blue Whale MVP. Set limit to 3. Show the tool call and returned sources.
+
+The host displayed an actual execution of search_trusted_sources with these arguments:
+
+```json
+{
+  "question": "Which interface is planned for the Blue Whale MVP?",
+  "limit": 3
+}
+```
+
+### Sources displayed by the host
+
+1. Decision 001 - Terminal-first MVP: Blue Whale needs a simple interface to test conversation drift detection and recovery.
+
+2. Spec v0 - Blue Whale: Interface: A terminal application for the MVP. A web interface is deferred.
+
+3. Decision 001 - Terminal-first MVP: The MVP will use command-line interaction. A web interface is deferred.
+
+Observed answer: The planned MVP interface is terminal-first (command-line).
+
+The displayed tool-call sequence contained one search_trusted_sources invocation.
+
+These observations are transcribed from the external host display, not represented as raw MCP protocol output. Complete SDK responses are retained in the earlier evidence sections.
+
+The demonstration confirms external MCP host integration. It does not establish live OpenRouter integration or live embedding quality.
+
+Earlier external host evidence is available in [streaming-evidence.md](../../docs/streaming-evidence.md).
+
+Original historical CI evidence is retained.
