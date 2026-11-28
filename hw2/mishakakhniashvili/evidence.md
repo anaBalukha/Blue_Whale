@@ -151,3 +151,49 @@ are not established by these tests.
 
 Strict runtime integer validation is retained even
 where JSON Schema validators accept integral floats.
+
+## Extended contract verification references
+
+Date: 2026-11-28.
+
+The individual contract was condensed to follow the course
+template. Extended technical references are retained here.
+
+- [Previous detailed contract](https://github.com/anaBalukha/Blue_Whale/blob/f1382833ac460448a45f497e698bd18026eab8b4/hw2/mishakakhniashvili/contract.md)
+- [Input contract](../../src/contracts.py)
+- [Retrieval tool](../../src/misha_retrieval_tool.py)
+- [Registry](../../src/tools.py)
+- [Execution gate](../../src/act.py)
+- [MCP server](../../src/mcp_server.py)
+- [Direct retrieval tests](../../tests/test_misha_retrieval_tool.py)
+- [MCP tests](../../tests/test_misha_mcp.py)
+- [Error-handling tests](../../tests/test_misha_tool_errors.py)
+- [Shared protocol tests](../../tests/test_mcp_protocol_boundary.py)
+- [Gate tests](../../tests/test_tool_gates.py)
+- [Golden runner](../../tests/test_tool_golden.py)
+- [Individual golden cases](../../evals/tools/mishakakhniashvili.yaml)
+
+Both interfaces enforce the same SearchArguments contract.
+Invalid arguments are rejected before retrieval executes.
+
+Audit logging is configurable using BLUE_WHALE_TOOL_LOG.
+The audit log excludes raw questions, retrieved content,
+caller identity and arbitrary unknown argument names.
+
+The shared executor returns a safe failure if audit logging
+is unavailable, without revealing the configured path.
+That failure cannot be recorded in the unavailable log.
+
+The individual search_trusted_sources tool remains distinct
+from the shared answer_from_trusted_sources tool introduced
+in PR #58.
+
+PR #62 corrected the published schema discrepancy and
+introduced an actionable empty-corpus failure message.
+
+All seven new regression cases passed. The shared product
+suite reached 185 passing tests and all five individual
+golden cases remained green.
+
+- [PR #62](https://github.com/anaBalukha/Blue_Whale/pull/62)
+- [Successful CI](https://github.com/anaBalukha/Blue_Whale/actions/runs/46095902952)
