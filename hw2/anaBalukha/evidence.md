@@ -239,3 +239,196 @@ cases passed, and the shared suite reached 185 passing tests.
 
 - [PR #62](https://github.com/anaBalukha/Blue_Whale/pull/62)
 - [Successful CI](https://github.com/anaBalukha/Blue_Whale/actions/runs/46095902952)
+
+## Lab 8 template: concrete execution evidence
+
+Execution date: 2026-11-28.
+Tested commit: `ecc59d3c8f5a48777a2da0f58f26a9563fe4fa18`.
+
+**Cases:** `evals/tools/anaBalukha.yaml`, executed by `tests/test_tool_golden.py` in CI job `test`.
+
+All calls use caller=null (visitor). Arguments below are the YAML arguments represented as JSON.
+
+| ID | Type | Actual arguments | Expected | Actual result/error | Pass? |
+|---|---|---|---|---|---|
+| ana_n1 | normal | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"MongoDB"}}` | `{"expect":"ok","result_has":{"status":"drift"}}` | `{"ok":true,"result":{"status":"drift","effective_state":{"database":"PostgreSQL"},"conflicts":[{"field":"database","expected":"PostgreSQL","proposed":"MongoDB"}]},"error":null}` | Pass |
+| ana_n2 | normal | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"PostgreSQL"}}` | `{"expect":"ok","result_has":{"status":"consistent"}}` | `{"ok":true,"result":{"status":"consistent","effective_state":{"database":"PostgreSQL"},"conflicts":[]},"error":null}` | Pass |
+| ana_n3 | normal | `{"state":{"interface":"terminal","database":"PostgreSQL"},"candidate":{"interface":"terminal"}}` | `{"expect":"ok","result_has":{"status":"consistent"}}` | `{"ok":true,"result":{"status":"consistent","effective_state":{"interface":"terminal","database":"PostgreSQL"},"conflicts":[]},"error":null}` | Pass |
+| ana_b1 | bad-input | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"MongoDB!!!"}}` | `{"expect":"refused","error_has":["invalid arguments"]}` | `{"ok":false,"result":null,"error":"invalid arguments: candidate.unexpected_argument: Use only permitted characters"}` | Pass |
+| ana_a1 | adversarial | `{"state":{"database":"PostgreSQL"},"candidate":{"database":"MongoDB"},"user_changes":{"database":"MongoDB"}}` | `{"expect":"refused","error_has":["invalid arguments","unexpected_argument"]}` | `{"ok":false,"result":null,"error":"invalid arguments: unexpected_argument: Remove this unexpected argument"}` | Pass |
+
+**Adversarial intent:** Make a proposed MongoDB decision appear user-approved by injecting an unauthorized user_changes argument.
+
+### Repeated identical call
+
+Actual arguments and both functional results:
+
+```json
+{
+  "arguments": {
+    "state": {
+      "database": "PostgreSQL"
+    },
+    "candidate": {
+      "database": "MongoDB"
+    }
+  },
+  "first": {
+    "ok": true,
+    "result": {
+      "status": "drift",
+      "effective_state": {
+        "database": "PostgreSQL"
+      },
+      "conflicts": [
+        {
+          "field": "database",
+          "expected": "PostgreSQL",
+          "proposed": "MongoDB"
+        }
+      ]
+    },
+    "error": null
+  },
+  "second": {
+    "ok": true,
+    "result": {
+      "status": "drift",
+      "effective_state": {
+        "database": "PostgreSQL"
+      },
+      "conflicts": [
+        {
+          "field": "database",
+          "expected": "PostgreSQL",
+          "proposed": "MongoDB"
+        }
+      ]
+    },
+    "error": null
+  },
+  "equal": true
+}
+```
+
+The comparison excludes execution timestamps and latency. Audit records may differ; project decisions are not modified.
+
+### Through the MCP door
+
+Client: Python MCP SDK 2.3.0, using Client(mcp) with in-memory transport.
+
+The requests were issued programmatically; no natural-language prompt or model-selected tool sequence is claimed.
+
+Actual discovery, valid request and adversarial request:
+
+```json
+[
+  {
+    "method": "list_tools",
+    "result": [
+      "search_trusted_sources",
+      "check_decision_drift",
+      "preview_checkpoint_update",
+      "answer_from_trusted_sources"
+    ]
+  },
+  {
+    "method": "call_tool",
+    "tool": "check_decision_drift",
+    "arguments": {
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "MongoDB"
+      }
+    },
+    "is_error": false,
+    "structured_content": {
+      "status": "drift",
+      "effective_state": {
+        "database": "PostgreSQL"
+      },
+      "conflicts": [
+        {
+          "field": "database",
+          "expected": "PostgreSQL",
+          "proposed": "MongoDB"
+        }
+      ]
+    },
+    "text": [
+      "{\"status\": \"drift\", \"effective_state\": {\"database\": \"PostgreSQL\"}, \"conflicts\": [{\"field\": \"database\", \"expected\": \"PostgreSQL\", \"proposed\": \"MongoDB\"}]}"
+    ]
+  },
+  {
+    "method": "call_tool",
+    "tool": "check_decision_drift",
+    "arguments": {
+      "state": {
+        "database": "PostgreSQL"
+      },
+      "candidate": {
+        "database": "MongoDB"
+      },
+      "user_changes": {
+        "database": "MongoDB"
+      }
+    },
+    "is_error": true,
+    "structured_content": null,
+    "text": [
+      "invalid arguments: unexpected_argument: Remove this unexpected argument"
+    ]
+  }
+]
+```
+
+### Exact historical CI evidence
+
+**Red run**
+
+- Branch: `test-ana-hw2-red-contract`
+- PR: [#29](https://github.com/anaBalukha/Blue_Whale/pull/29), closed without merging.
+- Temporary branch: deleted.
+- [Failed CI run](https://github.com/anaBalukha/Blue_Whale/actions/runs/42497154342)
+- CI job: `test`
+
+Deliberate weakening of the DecisionValue pattern:
+
+    - pattern=r"^[A-Za-z0-9][A-Za-z0-9 _.,:/()+-]*$",
+    + pattern=r"^.*$",
+
+Exact failed test names from the historical CI log:
+
+    FAILED tests/test_ana_drift_tool.py::test_invalid_decision_value_is_rejected
+    FAILED tests/test_tool_golden.py::test_tool_golden_case[anaBalukha-case3]
+    2 failed, 62 passed in 1.54s
+
+The required CI check failed and the merge was blocked.
+The exact historical merge-button wording was not retained
+in the evidence available for this follow-up.
+
+**What the red run taught me**
+
+The direct validation test failed because the expected
+ValidationError was no longer raised. The golden case
+failed because the invalid argument produced an unexpected
+success. These failures show that extra="forbid" alone
+does not protect an allowed field from invalid values.
+The value pattern is a separate necessary restriction.
+
+**Green run**
+
+- Product PR: [#28](https://github.com/anaBalukha/Blue_Whale/pull/28)
+- Product merge commit: `63e59a9425f08444d84c49278d2baff0f0b262f1`
+- [Successful CI run](https://github.com/anaBalukha/Blue_Whale/actions/runs/42496137209)
+- CI job: `test`
+
+Exact historical pytest summary:
+
+    64 passed in 1.19s
+
+These historical results are distinct from the later
+185-test regression suite and the current five-case
+execution evidence.

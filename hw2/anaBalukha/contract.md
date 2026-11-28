@@ -2,15 +2,19 @@
 
 ## `check_decision_drift`
 
+**Owner:** `anaBalukha` · **Repository:** [Blue Whale](https://github.com/anaBalukha/Blue_Whale)
+
+**Product PR:** [#28](https://github.com/anaBalukha/Blue_Whale/pull/28) · Merge SHA: `63e59a9`.
+
 **Model description:** Compare supplied prior and proposed project decisions without modifying either.
 
 | Property | Contract |
 |---|---|
 | Effect | Read-only; least-privilege in-memory comparison |
 | Undo | Nothing to undo |
-| Idempotent | Yes, for identical inputs |
-| Offered to | Visitors and signed-in users |
-| Identity | Not required; never an argument |
+| Idempotent | Second identical call returned `{"status":"drift","effective_state":{"database":"PostgreSQL"},"conflicts":[{"field":"database","expected":"PostgreSQL","proposed":"MongoDB"}]}`; same functional result |
+| Offered to | Visitors and signed-in users; `tools_for()` permits read-only tools ([rule](../../src/tools.py#L106-L111)) |
+| Identity | Not required; application supplies caller context, MCP passes None; never an argument |
 | Touches | `src/drift_core.py`; audit log |
 | Must never | Change trusted state or fabricate user approval |
 
@@ -18,8 +22,8 @@
 
 | Argument | Type | Constraint | Description |
 |---|---|---|---|
-| state | dict[str, str] | 1–8 entries | Prior decisions |
-| candidate | dict[str, str] | 1–8 entries | Proposed decisions |
+| state | dict[str, str] | 1–8 entries | One to eight project decisions. |
+| candidate | dict[str, str] | 1–8 entries | One to eight project decisions. |
 
 Keys: 1–32 characters, `^[a-z][a-z0-9_]*$`.
 
@@ -57,6 +61,14 @@ Line terminators are forbidden. No numeric, identity or override arguments.
 
 **Limits:** No persistent memory or state authentication. Both interfaces use the shared validation gate.
 
-**Code:** [Contract](../../src/contracts.py) · [Tool](../../src/ana_drift_tool.py) · [Registry](../../src/tools.py) · [Gate](../../src/act.py) · [MCP](../../src/mcp_server.py).
+**Code on main:** [DriftArguments, L92](../../src/contracts.py#L92) · [run_drift, L25](../../src/ana_drift_tool.py#L25) · [Registry, L74](../../src/tools.py#L74) · [Gate, L45](../../src/act.py#L45) · [MCP, L131](../../src/mcp_server.py#L131).
 
-[Product PR #28](https://github.com/anaBalukha/Blue_Whale/pull/28) · [Extended evidence](evidence.md).
+**Development decision:** Earlier published schemas omitted the
+decision-key pattern, although runtime validation enforced it.
+This meant clients could see invalid keys as schema-valid.
+PR #49 added the missing restriction to propertyNames without
+changing the read-only comparison logic. I retained that restriction
+because published contracts should describe the actual runtime boundary.
+
+[Decision diff: PR #49](https://github.com/anaBalukha/Blue_Whale/pull/49/files)
+· [Extended evidence](evidence.md).
