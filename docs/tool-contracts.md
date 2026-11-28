@@ -147,6 +147,88 @@ The shared execution gate validates inputs before running the tool and logs call
 
 The tool must work through normal function calling and the existing MCP server.
 
+## answer_from_trusted_sources
+
+Status: Proposed Lab 5 shared team tool.
+
+This tool is separate from the three individual HW2 tools.
+
+**Model-facing description:** Answer a project question
+using trusted Blue Whale documents, returning validated
+citations or a safe refusal.
+
+| Property | Contract |
+|---|---|
+| Effect | Read-only with respect to project state |
+| Undo | Nothing to undo |
+| Idempotent | No state changes; generated wording may vary |
+| Offered to | Visitors and signed-in users |
+| Identity | Not needed; never a tool argument |
+| Touches | Existing trusted index, retrieval and answer pipeline |
+| Must never | Modify decisions, invent sources, access arbitrary files or accept model-supplied authorization |
+
+### Inputs
+
+- question: ASCII string, 8-160 characters.
+- Reuse the existing Question pattern and length constraints.
+- limit: strict integer between 1 and 5, default 5.
+- Extra arguments are forbidden.
+- No identity, path, approval or authorization argument.
+- Citation validation cannot be disabled by the caller.
+
+### Result
+
+- status: answered or refused.
+- text: Grounded answer or safe refusal.
+- sources: Retrieved source references used by the answer.
+
+An insufficient-evidence refusal is a valid result,
+not an execution failure.
+
+### Expected failures
+
+| Failure | Model-facing behavior |
+|---|---|
+| Invalid question | Provide a valid question |
+| Invalid limit | Use an integer between 1 and 5 |
+| Unexpected argument | Remove the unexpected argument |
+| Trusted index unavailable | Ask the operator to rebuild the index |
+| Insufficient evidence | Return the existing safe refusal |
+| Invalid citations | Return the existing safe refusal |
+| Unexpected execution failure | Return a generic safe error |
+| Audit logging unavailable | Return a safe failure |
+
+### Safety and resource limits
+
+Reuse the existing grounded answer function with citation
+checking enabled.
+
+The tool may perform retrieval and one additional answer
+generation call per invocation. Live mode can incur
+embedding and generation costs.
+
+Offline tests must use simulated model responses and
+must not require an API key.
+
+The tool audit log must not contain raw questions or
+caller identities. Existing answer diagnostics may record
+the question, so demonstration inputs must be synthetic
+and non-sensitive.
+
+A returned answer is not authorization to update
+trusted conversation state.
+
+### Verification plan
+
+- Valid grounded answer with citations.
+- Safe refusal when evidence is insufficient.
+- Refusal when the answer contains invalid citations.
+- Invalid arguments never reach the answer pipeline.
+- Forged identity and arbitrary path arguments rejected.
+- Function-calling and MCP result parity.
+- Exactly one tool audit entry per invocation.
+- Existing product tests and HW2 goldens remain green.
+
 ## HW2 ownership
 
 | Member | HW2 tool |
